@@ -1,0 +1,28 @@
+# Stage 3 diagnostic: why does LDA collapse across days (E2) while LightGBM holds?
+# Hypothesis: MAV / RMS / WL are nearly collinear, Sigma is near-singular and Sigma^-1 amplifies tiny
+# session-specific differences. Shrinkage removes the huge weights; log evens out the class spreads.
+# Same data and splits as baseline_dev; LightGBM reference is in results/baseline_dev.json.
+name: lda_variants_dev
+experiment: baseline
+participants: dev
+seed: 42
+cross_subject: lopo
+experiments: [E1, E2, E3, E4]
+
+preprocess:
+  band_hz: [20, 450]
+  order: 4
+  notch_hz: []
+  window_ms: 200
+  step_ms: 50
+  warmup_ms: 200
+
+features:
+  zc_thr_mv: 0.01
+  ssc_thr_mv: 0.01
+
+models:
+  lda: {}
+  lda_shrink: {type: lda, solver: lsqr, shrinkage: auto}
+  lda_log: {type: lda, log_amp: true}
+  lda_log_shrink: {type: lda, solver: lsqr, shrinkage: auto, log_amp: true}

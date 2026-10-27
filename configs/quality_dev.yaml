@@ -1,0 +1,8 @@
+# Stage 2: per-channel signal quality on the development subset.
+name: quality_dev
+experiment: quality
+participants: dev          # from configs/splits.yaml
+seed: 42
+amp_threshold_mv: 5.0      # |x| above this = possible saturation / artifact (ADC limit not recoverable, see notes)
+dead_std_uv: 0.5           # rest SD below this = dead channel
+outlier_k: 3.0             # robust z-score threshold for outlier flags

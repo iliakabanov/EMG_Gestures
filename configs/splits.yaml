@@ -1,0 +1,11 @@
+# Fixed participant splits. Drawn once:
+#   rng = np.random.default_rng(42); p = rng.permutation(np.arange(1, 44))
+#   original groups: test = p[:10], val = p[10:15], dev = p[15:20]
+# 2026-10-27: the former val group joined dev; the new test group is the first 5 of the original test group.
+# dev: hyperparameters are tuned here (E1/E2 per participant, E3 by leave-one-participant-out).
+# test: models with frozen hyperparameters are run here once; nothing is tuned on these participants.
+# reserve: rest of the original test group, not used.
+seed: 42
+dev: [11, 21, 24, 27, 38, 6, 22, 31, 35, 40]
+test: [5, 8, 17, 19, 25]
+reserve: [28, 29, 33, 41, 43]

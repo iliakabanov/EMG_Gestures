@@ -1,0 +1,25 @@
+# Stage 3: causal preprocessing + Hudgins features + LDA / LightGBM on splits E1-E4, development subset.
+name: baseline_dev
+experiment: baseline
+participants: dev          # from configs/splits.yaml
+seed: 42
+# Only 5 dev participants: E3/E4 hold out each one in turn (leave-one-participant-out, train on the other 4).
+# The final run uses `holdout` with the fixed test participants from splits.yaml.
+cross_subject: lopo
+experiments: [E1, E2, E3, E4]
+
+preprocess:
+  band_hz: [20, 450]
+  order: 4                 # Butterworth order per edge
+  notch_hz: []             # 60 Hz is already notched in the published data (stage 1); harmonics = separate experiment
+  window_ms: 200
+  step_ms: 50
+  warmup_ms: 200           # drop the filter start-up at the beginning of each trial (a stream has no such start)
+
+features:
+  zc_thr_mv: 0.01          # ~1.5x the median rest noise (6.9 uV, stage 2)
+  ssc_thr_mv: 0.01
+
+models:
+  lda: {}
+  lgbm: {n_estimators: 300, learning_rate: 0.05, num_leaves: 31, n_jobs: 16}

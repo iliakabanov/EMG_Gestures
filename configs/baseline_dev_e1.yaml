@@ -1,0 +1,28 @@
+# Stage 3 models on the 10 dev participants, E1 (within session): 30 splits = participant x session,
+# trials 1-5 -> trials 6-7. Choosing the LDA variant here is the LDA hyperparameter tuning; the chosen
+# variant and LightGBM are then run once on the test participants.
+name: baseline_dev_e1
+experiment: baseline
+participants: dev          # from configs/splits.yaml (10 people)
+seed: 42
+cross_subject: lopo
+experiments: [E1]
+
+preprocess:
+  band_hz: [20, 450]
+  order: 4
+  notch_hz: []
+  window_ms: 200
+  step_ms: 50
+  warmup_ms: 200
+
+features:
+  zc_thr_mv: 0.01
+  ssc_thr_mv: 0.01
+
+models:
+  lda: {}
+  lda_shrink: {type: lda, solver: lsqr, shrinkage: auto}
+  lda_log: {type: lda, log_amp: true}
+  lda_log_shrink: {type: lda, solver: lsqr, shrinkage: auto, log_amp: true}
+  lgbm: {n_estimators: 300, learning_rate: 0.05, num_leaves: 31, n_jobs: 16}

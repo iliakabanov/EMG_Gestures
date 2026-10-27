@@ -1,0 +1,39 @@
+# FINAL run of the TCN on the test participants, E1 (within session): 15 trainings = participant x session,
+# trials 1-5 -> 6-7. Recipe frozen on dev (tcn_dev_e1 vs tcn_dev_e1_drop0.2): dropout 0, 51 epochs
+# (maximum of the 3-point smoothed median curve). Run once; nothing is tuned on these results.
+name: tcn_test_e1
+experiment: tcn
+participants: test         # from configs/splits.yaml (5 people)
+seed: 42
+cross_subject: lopo
+experiments: [E1]
+select_epochs: false
+epochs: {E1: 51}
+
+preprocess:
+  band_hz: [20, 450]
+  order: 4
+  notch_hz: []
+  warmup_ms: 200
+  decimate: 2
+
+windows:
+  window_ms: 200
+  step_ms: 50
+
+model:
+  channels: 64
+  kernel: 3
+  dilations: [1, 2, 4, 8, 16, 20]   # receptive field 205 samples = 200 ms
+  dropout: 0.0
+
+train:
+  crop_ms: 1200
+  crops_per_trial: 4
+  batch: 64
+  lr: 0.001
+  weight_decay: 0.01
+
+compare_with:              # same test participants, for the figure
+  lda_log_shrink: {result: results/baseline_test_e1.json, model: lda_log_shrink}
+  lgbm: {result: results/baseline_test_e1.json, model: lgbm}

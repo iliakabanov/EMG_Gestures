@@ -1,0 +1,11 @@
+numpy>=1.26
+scipy>=1.14
+pandas>=2.2
+wfdb>=4.3
+scikit-learn>=1.5
+lightgbm>=4.5
+torch>=2.3
+onnx>=1.16
+onnxruntime>=1.18
+matplotlib>=3.9
+pyyaml>=6.0

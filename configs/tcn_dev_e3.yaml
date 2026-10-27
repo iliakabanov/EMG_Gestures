@@ -1,0 +1,38 @@
+# Stage 4, step 1, E3 (across people): choose the number of training epochs on the dev participants.
+# 5 trainings, 5-fold cross-validation by people: train on 8 (all sessions), test on the other 2 (all sessions).
+# The test part is scored every `eval_every` epochs; the best median epoch goes to the test config.
+name: tcn_dev_e3
+experiment: tcn
+participants: dev          # from configs/splits.yaml (10 people)
+seed: 42                   # also fixes which people go into which fold
+cross_subject: kfold
+n_folds: 5
+experiments: [E3]
+select_epochs: true
+only_split: null         # one training only (fold1 ... fold5); null = all 5 folds
+
+preprocess:                # same filter and start-up as the feature models
+  band_hz: [20, 450]
+  order: 4
+  notch_hz: []
+  warmup_ms: 200
+  decimate: 2              # 2048 -> 1024 Hz; the 20-450 Hz band-pass is the anti-alias filter
+
+windows:                   # decisions at the same moments as the 200 ms / 50 ms feature windows
+  window_ms: 200
+  step_ms: 50
+
+model:
+  channels: 64
+  kernel: 3
+  dilations: [1, 2, 4, 8, 16, 20]   # receptive field 1 + 2*2*51 = 205 samples = 200 ms, equal to the window
+  dropout: 0.0             # channel dropout after every ReLU in the blocks (training only); 0 = off
+
+train:
+  crop_ms: 1200            # random crops; loss on the positions with a full receptive field (~1 s per crop)
+  crops_per_trial: 4       # crops per trial per epoch
+  batch: 64
+  lr: 0.001
+  weight_decay: 0.01
+  max_epochs: 60
+  eval_every: 3

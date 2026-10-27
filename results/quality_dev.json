@@ -1,0 +1,331 @@
+{
+  "config": {
+    "name": "quality_dev",
+    "experiment": "quality",
+    "participants": "dev",
+    "seed": 42,
+    "amp_threshold_mv": 5.0,
+    "dead_std_uv": 0.5,
+    "outlier_k": 3.0
+  },
+  "finished": "2026-10-19T19:44:25",
+  "participants": [
+    11,
+    21,
+    24,
+    27,
+    38
+  ],
+  "n_channel_sessions": 180,
+  "metrics": {
+    "noise_rms_uv": {
+      "median": 6.853804861346603,
+      "p5": 3.4925426891824167,
+      "p95": 14.224402573817846,
+      "min": 2.8107861607723126,
+      "max": 32.00049256298345
+    },
+    "signal_rms_uv": {
+      "median": 43.02416009135548,
+      "p5": 23.612581489348656,
+      "p95": 83.95507189097762,
+      "min": 17.54263873938359,
+      "max": 109.3692370808591
+    },
+    "snr_db": {
+      "median": 15.093496183466119,
+      "p5": 7.618450125366599,
+      "p95": 23.52648060541965,
+      "min": 3.4583595548717354,
+      "max": 26.119922880774155
+    },
+    "harm_frac_rest_pct": {
+      "median": 3.3138299700896825,
+      "p5": 2.100842626438953,
+      "p95": 39.22429413438598,
+      "min": 1.6441608341272025,
+      "max": 45.71780632436553
+    },
+    "res60_frac_rest_pct": {
+      "median": 0.13655785720748653,
+      "p5": 0.03902897984608661,
+      "p95": 0.2128421999870321,
+      "min": 0.01437948774196211,
+      "max": 0.2617608621143252
+    },
+    "low_frac_rest_pct": {
+      "median": 5.993041985607796,
+      "p5": 2.801197661391107,
+      "p95": 17.538000776232273,
+      "min": 0.6327897453819386,
+      "max": 30.000114557986716
+    },
+    "max_abs_mv": {
+      "median": 0.705478065319517,
+      "p5": 0.3208634973377834,
+      "p95": 8.592974790989073,
+      "min": 0.24613570344544367,
+      "max": 8.777896499464727
+    },
+    "over_thr_pct": {
+      "median": 0.0,
+      "p5": 0.0,
+      "p95": 0.0027081144957983192,
+      "min": 0.0,
+      "max": 0.003282563025210084
+    }
+  },
+  "per_participant_session_snr_median_db": {
+    "11/s1": 14.48,
+    "11/s2": 17.95,
+    "11/s3": 14.38,
+    "21/s1": 20.02,
+    "21/s2": 18.19,
+    "21/s3": 15.11,
+    "24/s1": 21.2,
+    "24/s2": 23.0,
+    "24/s3": 22.85,
+    "27/s1": 16.13,
+    "27/s2": 11.59,
+    "27/s3": 9.93,
+    "38/s1": 11.33,
+    "38/s2": 12.47,
+    "38/s3": 11.5
+  },
+  "n_dead": 0,
+  "rejected_trials": {
+    "11/s2": 1
+  },
+  "outliers": [
+    {
+      "participant": 11,
+      "session": 3,
+      "channel": "W12",
+      "flag_reasons": "noise_rms_uv high (z=+3.4)"
+    },
+    {
+      "participant": 24,
+      "session": 1,
+      "channel": "W1",
+      "flag_reasons": "harm_frac_rest_pct high (z=+7.8)"
+    },
+    {
+      "participant": 24,
+      "session": 1,
+      "channel": "W2",
+      "flag_reasons": "harm_frac_rest_pct high (z=+7.8)"
+    },
+    {
+      "participant": 24,
+      "session": 1,
+      "channel": "W3",
+      "flag_reasons": "harm_frac_rest_pct high (z=+7.6)"
+    },
+    {
+      "participant": 24,
+      "session": 1,
+      "channel": "W4",
+      "flag_reasons": "harm_frac_rest_pct high (z=+7.7)"
+    },
+    {
+      "participant": 24,
+      "session": 1,
+      "channel": "W5",
+      "flag_reasons": "harm_frac_rest_pct high (z=+7.3)"
+    },
+    {
+      "participant": 24,
+      "session": 1,
+      "channel": "W6",
+      "flag_reasons": "harm_frac_rest_pct high (z=+7.6)"
+    },
+    {
+      "participant": 24,
+      "session": 1,
+      "channel": "W7",
+      "flag_reasons": "harm_frac_rest_pct high (z=+7.9)"
+    },
+    {
+      "participant": 24,
+      "session": 1,
+      "channel": "W8",
+      "flag_reasons": "harm_frac_rest_pct high (z=+7.9)"
+    },
+    {
+      "participant": 24,
+      "session": 1,
+      "channel": "W9",
+      "flag_reasons": "harm_frac_rest_pct high (z=+7.9)"
+    },
+    {
+      "participant": 24,
+      "session": 1,
+      "channel": "W10",
+      "flag_reasons": "harm_frac_rest_pct high (z=+7.5)"
+    },
+    {
+      "participant": 24,
+      "session": 1,
+      "channel": "W11",
+      "flag_reasons": "harm_frac_rest_pct high (z=+7.7)"
+    },
+    {
+      "participant": 24,
+      "session": 1,
+      "channel": "W12",
+      "flag_reasons": "harm_frac_rest_pct high (z=+7.2)"
+    },
+    {
+      "participant": 24,
+      "session": 2,
+      "channel": "W1",
+      "flag_reasons": "harm_frac_rest_pct high (z=+3.1); low_frac_rest_pct high (z=+3.3)"
+    },
+    {
+      "participant": 24,
+      "session": 2,
+      "channel": "W2",
+      "flag_reasons": "harm_frac_rest_pct high (z=+3.5)"
+    },
+    {
+      "participant": 24,
+      "session": 2,
+      "channel": "W3",
+      "flag_reasons": "low_frac_rest_pct high (z=+3.9)"
+    },
+    {
+      "participant": 24,
+      "session": 2,
+      "channel": "W7",
+      "flag_reasons": "low_frac_rest_pct high (z=+3.7)"
+    },
+    {
+      "participant": 24,
+      "session": 2,
+      "channel": "W8",
+      "flag_reasons": "harm_frac_rest_pct high (z=+3.2); low_frac_rest_pct high (z=+3.3)"
+    },
+    {
+      "participant": 24,
+      "session": 2,
+      "channel": "W9",
+      "flag_reasons": "low_frac_rest_pct high (z=+4.3)"
+    },
+    {
+      "participant": 24,
+      "session": 2,
+      "channel": "W11",
+      "flag_reasons": "low_frac_rest_pct high (z=+3.7)"
+    },
+    {
+      "participant": 24,
+      "session": 3,
+      "channel": "W1",
+      "flag_reasons": "harm_frac_rest_pct high (z=+4.2)"
+    },
+    {
+      "participant": 24,
+      "session": 3,
+      "channel": "W2",
+      "flag_reasons": "harm_frac_rest_pct high (z=+4.0)"
+    },
+    {
+      "participant": 24,
+      "session": 3,
+      "channel": "W3",
+      "flag_reasons": "harm_frac_rest_pct high (z=+3.0)"
+    },
+    {
+      "participant": 24,
+      "session": 3,
+      "channel": "W7",
+      "flag_reasons": "harm_frac_rest_pct high (z=+4.0)"
+    },
+    {
+      "participant": 24,
+      "session": 3,
+      "channel": "W8",
+      "flag_reasons": "harm_frac_rest_pct high (z=+5.1)"
+    },
+    {
+      "participant": 24,
+      "session": 3,
+      "channel": "W9",
+      "flag_reasons": "harm_frac_rest_pct high (z=+3.7)"
+    },
+    {
+      "participant": 24,
+      "session": 3,
+      "channel": "W10",
+      "flag_reasons": "low_frac_rest_pct high (z=+3.1)"
+    }
+  ],
+  "session_drift": [
+    {
+      "participant": 11,
+      "snr_session_means_db": [
+        14.3,
+        17.8,
+        13.1
+      ],
+      "common_shift_range_db": 4.707138916463029,
+      "median_channel_range_db": 3.984658642429056,
+      "max_channel_range_db": 13.728625168361122,
+      "channel_specific_sd_db": 1.362007084135257
+    },
+    {
+      "participant": 21,
+      "snr_session_means_db": [
+        19.8,
+        17.0,
+        14.9
+      ],
+      "common_shift_range_db": 4.813773690617063,
+      "median_channel_range_db": 4.854349250861998,
+      "max_channel_range_db": 10.80772871113566,
+      "channel_specific_sd_db": 1.2413763401314863
+    },
+    {
+      "participant": 24,
+      "snr_session_means_db": [
+        21.3,
+        23.1,
+        21.9
+      ],
+      "common_shift_range_db": 1.7060237071411706,
+      "median_channel_range_db": 2.0811459244420956,
+      "max_channel_range_db": 9.521843753859985,
+      "channel_specific_sd_db": 1.3692008943420761
+    },
+    {
+      "participant": 27,
+      "snr_session_means_db": [
+        15.8,
+        11.4,
+        9.5
+      ],
+      "common_shift_range_db": 6.288240704636477,
+      "median_channel_range_db": 5.873457198336203,
+      "max_channel_range_db": 9.338592122175173,
+      "channel_specific_sd_db": 0.8203035453421709
+    },
+    {
+      "participant": 38,
+      "snr_session_means_db": [
+        11.6,
+        12.2,
+        11.2
+      ],
+      "common_shift_range_db": 0.9635927788056335,
+      "median_channel_range_db": 1.132924981167128,
+      "max_channel_range_db": 4.0568147072322045,
+      "channel_specific_sd_db": 0.7467058563647981
+    }
+  ],
+  "channel_table": "results\\quality_dev_channels.csv",
+  "figures": [
+    "reports\\figures\\02_snr_heatmap_quality_dev.png",
+    "reports\\figures\\02_snr_sessions_quality_dev.png",
+    "reports\\figures\\02_outliers_quality_dev.png"
+  ]
+}

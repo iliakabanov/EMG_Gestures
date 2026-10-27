@@ -1,0 +1,40 @@
+# FINAL run of the TCN, E3 (across people): one network trained on all 10 dev participants (all sessions),
+# tested on the 5 test participants (all sessions). Recipe frozen on dev (tcn_dev_e3, 5-fold by people):
+# dropout 0, 36 epochs (maximum of the 3-point smoothed median curve; the curve is flat at 44-46 % from epoch 12).
+# Run once; nothing is tuned on these results.
+name: tcn_test_e3
+experiment: tcn
+participants: dev+test     # load both groups: train = dev, test = test
+seed: 42
+cross_subject: holdout     # held-out participants = the `test` group of configs/splits.yaml
+experiments: [E3]
+select_epochs: false
+epochs: {E3: 36}
+
+preprocess:
+  band_hz: [20, 450]
+  order: 4
+  notch_hz: []
+  warmup_ms: 200
+  decimate: 2
+
+windows:
+  window_ms: 200
+  step_ms: 50
+
+model:
+  channels: 64
+  kernel: 3
+  dilations: [1, 2, 4, 8, 16, 20]   # receptive field 205 samples = 200 ms
+  dropout: 0.0
+
+train:
+  crop_ms: 1200
+  crops_per_trial: 4
+  batch: 64
+  lr: 0.001
+  weight_decay: 0.01
+
+compare_with:              # same test participants, for the figure
+  lda_log_shrink: {result: results/baseline_test_e3.json, model: lda_log_shrink}
+  lgbm: {result: results/baseline_test_e3.json, model: lgbm}

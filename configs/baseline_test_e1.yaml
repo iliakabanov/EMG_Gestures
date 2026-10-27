@@ -1,0 +1,25 @@
+# FINAL run on the test participants, E1 (within session): 15 splits = participant x session, trials 1-5 -> 6-7.
+# Hyperparameters frozen on dev (baseline_dev_e1/e2/e3): LDA variant = log + shrink; LightGBM unchanged.
+# Run once; nothing is tuned on these results.
+name: baseline_test_e1
+experiment: baseline
+participants: test         # from configs/splits.yaml (5 people)
+seed: 42
+cross_subject: lopo
+experiments: [E1]
+
+preprocess:
+  band_hz: [20, 450]
+  order: 4
+  notch_hz: []
+  window_ms: 200
+  step_ms: 50
+  warmup_ms: 200
+
+features:
+  zc_thr_mv: 0.01
+  ssc_thr_mv: 0.01
+
+models:
+  lda_log_shrink: {type: lda, solver: lsqr, shrinkage: auto, log_amp: true}
+  lgbm: {n_estimators: 300, learning_rate: 0.05, num_leaves: 31, n_jobs: 16}
