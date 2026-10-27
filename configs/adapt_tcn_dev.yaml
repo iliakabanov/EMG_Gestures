@@ -1,0 +1,56 @@
+# Stage 5, TCN on the 10 dev participants: adaptation to a new day (E2) and a new person (E3).
+# Base models: the stage-4 recipe (dropout 0, 36 epochs for E2 and E3), cached in data/cache/models_*;
+# re-running with other adaptation settings does not retrain them.
+# Target session: trials 1-3 are the calibration pool, trials 4-7 the test (same split as adapt_lda_dev).
+name: adapt_tcn_dev
+experiment: adapt_tcn
+participants: dev          # from configs/splits.yaml (10 people)
+seed: 42                   # also fixes which people go into which E3 fold (same folds as tcn_dev_e3)
+cross_subject: kfold
+n_folds: 5
+experiments: [E2, E3]
+epochs: {E2: 36, E3: 36}
+
+preprocess:
+  band_hz: [20, 450]
+  order: 4
+  notch_hz: []
+  warmup_ms: 200
+  decimate: 2
+
+windows:
+  window_ms: 200
+  step_ms: 50
+
+model:
+  channels: 64
+  kernel: 3
+  dilations: [1, 2, 4, 8, 16, 20]   # receptive field 205 samples = 200 ms
+  dropout: 0.0
+
+train:
+  crop_ms: 1200
+  crops_per_trial: 4
+  batch: 64
+  lr: 0.001
+  weight_decay: 0.01
+
+calib_trials: 3
+# "PxS" = first S seconds of every gesture in each of the first P passes (trials); user time = 17 x P x S.
+# Passes of 1 s (1x1, 2x1, 3x1), one long pass (1x2, 1x5) and everything (3x5), as in adapt_lda_passes_dev.
+budgets_s: [1x1, 1x2, 2x1, 3x1, 1x5, 3x5]
+figure: passes
+
+methods:
+  none: {}                                                  # base model as is
+  input_scale: {unlabeled: input_scale}                     # no labels: per-channel input SD of the new session
+  adabn: {unlabeled: adabn}                                 # no labels: + batch-norm statistics (AdaBN)
+  head: {unlabeled: adabn, finetune: head, lr: 0.001, steps: 200}    # labels: AdaBN + train the head only
+  full: {unlabeled: adabn, finetune: full, lr: 0.0001, steps: 200}   # labels: AdaBN + train all weights
+
+labels:
+  none: без адаптации
+  input_scale: масштаб входа, без меток
+  adabn: AdaBN, без меток
+  head: AdaBN + голова
+  full: AdaBN + вся сеть

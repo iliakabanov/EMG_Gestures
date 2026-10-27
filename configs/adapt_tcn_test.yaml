@@ -1,0 +1,51 @@
+# FINAL run of stage 5, TCN, on the 5 test participants. Base networks: the stage-4 recipe (dropout 0, 36 epochs),
+# adaptation frozen on dev (adapt_tcn_dev): AdaBN without labels; AdaBN + fine-tuning all weights
+# (lr 1e-4, 200 steps); budgets of 1-s passes plus everything.
+#   E2 (new day):    own session 1 -> sessions 2 and 3 of each test participant (5 base networks)
+#   E3 (new person): one network on all 10 dev participants (all sessions) -> all 3 sessions of each test participant
+# Target session: trials 1-3 = calibration pool, trials 4-7 = test. Run once; nothing is tuned on these results.
+name: adapt_tcn_test
+experiment: adapt_tcn
+participants: dev+test     # dev trains the E3 network; only test participants are adapted to
+seed: 42
+cross_subject: holdout     # held-out participants = the `test` group of configs/splits.yaml
+experiments: [E2, E3]
+epochs: {E2: 36, E3: 36}
+
+preprocess:
+  band_hz: [20, 450]
+  order: 4
+  notch_hz: []
+  warmup_ms: 200
+  decimate: 2
+
+windows:
+  window_ms: 200
+  step_ms: 50
+
+model:
+  channels: 64
+  kernel: 3
+  dilations: [1, 2, 4, 8, 16, 20]   # receptive field 205 samples = 200 ms
+  dropout: 0.0
+
+train:
+  crop_ms: 1200
+  crops_per_trial: 4
+  batch: 64
+  lr: 0.001
+  weight_decay: 0.01
+
+calib_trials: 3
+budgets_s: [1x1, 2x1, 3x1, 3x5]   # "PxS": first S s of every gesture in each of the first P passes
+figure: passes
+
+methods:
+  none: {}
+  adabn: {unlabeled: adabn}
+  full: {unlabeled: adabn, finetune: full, lr: 0.0001, steps: 200}
+
+labels:
+  none: без адаптации
+  adabn: AdaBN, без меток
+  full: AdaBN + вся сеть

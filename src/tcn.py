@@ -75,6 +75,27 @@ def window_ends(win: int, step: int, n_windows: int) -> np.ndarray:
     return np.arange(n_windows) * step + win - 1
 
 
+def build(n_channels: int, n_classes: int, model_cfg: dict) -> TCN:
+    """TCN from the `model` section of a config."""
+    return TCN(n_channels, n_classes, channels=model_cfg["channels"], kernel=model_cfg["kernel"],
+               dilations=tuple(model_cfg["dilations"]), dropout=model_cfg.get("dropout", 0.0))
+
+
+def crop_loss(model: TCN, Xd: torch.Tensor, yd: torch.Tensor, trials: np.ndarray, starts: np.ndarray,
+              crop: int) -> torch.Tensor:
+    """Mean cross-entropy over the positions of each crop whose receptive field lies fully inside the crop.
+
+    Args:
+        Xd, yd: signals [N, C, T] and 0-based classes [N] on the model's device.
+        trials, starts: trial index and first sample of every crop in the batch.
+        crop: crop length, samples.
+    """
+    xb = torch.stack([Xd[t, :, s:s + crop] for t, s in zip(trials, starts)])
+    logits = model(xb)[:, :, model.receptive_field - 1:]
+    target = yd[torch.from_numpy(trials).to(Xd.device)][:, None].expand(-1, logits.shape[2])
+    return F.cross_entropy(logits, target)
+
+
 @torch.no_grad()
 def predict_windows(model: TCN, X: np.ndarray, ends: np.ndarray, device: str, batch: int = 64) -> np.ndarray:
     """Predicted class (0-based) for every trial in X [N, C, T] at every index in `ends` -> [N, len(ends)]."""
@@ -109,14 +130,13 @@ def fit(X: np.ndarray, y: np.ndarray, model_cfg: dict, train_cfg: dict, epochs: 
     torch.manual_seed(seed)
     rng = np.random.default_rng(seed)
     n_classes = int(y.max()) + 1
-    model = TCN(X.shape[1], n_classes, channels=model_cfg["channels"], kernel=model_cfg["kernel"],
-                dilations=tuple(model_cfg["dilations"]), dropout=model_cfg.get("dropout", 0.0)).to(device)
+    model = build(X.shape[1], n_classes, model_cfg).to(device)
     model.scale.copy_(torch.from_numpy(X.std(axis=(0, 2)).reshape(1, -1, 1)))
     opt = torch.optim.AdamW(model.parameters(), lr=train_cfg["lr"], weight_decay=train_cfg["weight_decay"])
 
     Xd = torch.from_numpy(X).to(device)
     yd = torch.from_numpy(y.astype(np.int64)).to(device)
-    crop, rf = train_cfg["crop"], model.receptive_field
+    crop = train_cfg["crop"]
     T = X.shape[2]
     history = []
     for epoch in range(1, epochs + 1):
@@ -125,10 +145,7 @@ def fit(X: np.ndarray, y: np.ndarray, model_cfg: dict, train_cfg: dict, epochs: 
         for i in range(0, len(trials), train_cfg["batch"]):
             ti = trials[i:i + train_cfg["batch"]]
             starts = rng.integers(0, T - crop + 1, size=len(ti))
-            xb = torch.stack([Xd[t, :, s:s + crop] for t, s in zip(ti, starts)])
-            logits = model(xb)[:, :, rf - 1:]
-            target = yd[torch.from_numpy(ti).to(device)][:, None].expand(-1, logits.shape[2])
-            loss = F.cross_entropy(logits, target)
+            loss = crop_loss(model, Xd, yd, ti, starts, crop)
             opt.zero_grad(set_to_none=True)
             loss.backward()
             opt.step()

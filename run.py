@@ -234,7 +234,102 @@ def run_tcn(cfg: dict) -> dict:
     }
 
 
-RUNNERS = {"quality": run_quality, "baseline": run_baseline, "tcn": run_tcn}
+def _adapt_outputs(rows: list[dict], cfg: dict) -> dict:
+    """Shared tail of the stage-5 runners: score table, summary, main figure."""
+    import pandas as pd
+
+    import adapt
+
+    scores = pd.DataFrame(rows)
+    csv_path = ROOT / "results" / f"{cfg['name']}_scores.csv"
+    scores.to_csv(csv_path, index=False)
+    pp = adapt.per_participant(scores)
+    plot = adapt.plot_passes if cfg.get("figure") == "passes" else adapt.plot_calibration
+    figures = [plot(pp, cfg["name"], cfg.get("labels"))]
+    return {
+        "summary": adapt.summary(pp).round(4).to_dict("records"),
+        "per_participant": pp.round(4).to_dict("records"),
+        "scores_table": str(csv_path.relative_to(ROOT)),
+        "figures": [str(Path(f).relative_to(ROOT)) for f in figures],
+    }
+
+
+def _target_splits(meta, exp: str, cfg: dict, test_ps: list[int] | None) -> list:
+    """Splits of one experiment for stage 5. With `holdout` both groups are loaded (dev trains the E3 model),
+    but only the test participants are adapted to: within-person splits (E1/E2) of dev people are dropped."""
+    from splits import make_splits
+
+    splits = make_splits(meta, exp, cfg["cross_subject"], test_ps, cfg.get("n_folds", 5), cfg.get("seed", 42))
+    if test_ps is None:
+        return splits
+    return [s for s in splits if set(meta.participant[s.test].unique()) <= set(test_ps)]
+
+
+def run_adapt_lda(cfg: dict) -> dict:
+    """Stage 5, LDA: unlabeled normalisation and labelled calibration on new sessions (E2) and new people (E3)."""
+    import adapt
+    from data import WRIST_IDX
+    from features import feature_names, feature_table
+
+    participants = resolve_participants(cfg["participants"])
+    idx = build_index()
+    idx = idx[idx.participant.isin(participants)]
+    missing = sorted(set(participants) - set(idx.participant))
+    if missing:
+        raise FileNotFoundError(f"no local data for participants {missing}; run src/data.py first")
+
+    channels = [f"W{i + 1}" for i in range(len(WRIST_IDX))]
+    table = feature_table(idx, {**cfg["preprocess"], **cfg["features"]}, channels)
+    test_ps = resolve_participants("test") if cfg["cross_subject"] == "holdout" else None
+    rows = []
+    for exp in cfg["experiments"]:
+        rows += adapt.evaluate_lda(table, feature_names(channels), _target_splits(table, exp, cfg, test_ps), cfg)
+    return {"participants": participants, **_adapt_outputs(rows, cfg)}
+
+
+def run_adapt_tcn(cfg: dict) -> dict:
+    """Stage 5, TCN: input rescaling, AdaBN and fine-tuning on new sessions (E2) and new people (E3).
+
+    Base models use the stage-4 recipe and are cached in data/cache/models_*, so a second run with other
+    adaptation settings does not retrain them.
+    """
+    import torch
+
+    import adapt
+    import signals
+    import tcn
+    from preprocess import ms_to_samples
+
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+
+    participants = resolve_participants(cfg["participants"])
+    idx = build_index()
+    idx = idx[idx.participant.isin(participants)]
+    missing = sorted(set(participants) - set(idx.participant))
+    if missing:
+        raise FileNotFoundError(f"no local data for participants {missing}; run src/data.py first")
+
+    meta, X = signals.signal_table(idx, cfg["preprocess"])
+    y = meta.gesture.to_numpy() - 1
+    fs = signals.effective_fs(cfg["preprocess"]["decimate"])
+    win = ms_to_samples(cfg["windows"]["window_ms"], fs)
+    step = ms_to_samples(cfg["windows"]["step_ms"], fs)
+    ends = tcn.window_ends(win, step, (X.shape[2] - win) // step + 1)
+    cfg = {**cfg, "crop": ms_to_samples(cfg["train"]["crop_ms"], fs)}
+    test_ps = resolve_participants("test") if cfg["cross_subject"] == "holdout" else None
+
+    rows, scratch_cache = [], {}
+    for exp in cfg["experiments"]:
+        for split in _target_splits(meta, exp, cfg, test_ps):
+            model = adapt.base_tcn(X, y, cfg, participants, split, cfg["epochs"][exp], device)
+            rows += adapt.evaluate_tcn(model, X, meta, split, cfg, ends, fs, device, scratch_cache)
+    return {"participants": participants, **_adapt_outputs(rows, cfg)}
+
+
+RUNNERS = {"quality": run_quality, "baseline": run_baseline, "tcn": run_tcn,
+           "adapt_lda": run_adapt_lda, "adapt_tcn": run_adapt_tcn}
 
 
 def _to_jsonable(o):

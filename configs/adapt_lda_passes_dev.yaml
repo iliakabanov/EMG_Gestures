@@ -1,0 +1,44 @@
+# Stage 5, LDA on the 10 dev participants: repetitions vs seconds. Does the same calibration time give more when
+# it is split into several passes through all 17 gestures (new repetitions) than when one pass is held longer?
+# Budget "PxS" = the first S seconds of every gesture in each of trials 1..P. Grid: P = 1, 2, 3 x S = 1, 2, 5,
+# e.g. 2x1 and 1x2 cost the same 34 s of holding. Everything else as in adapt_lda_dev (1x1, 1x2, 1x5, 2x5, 3x5
+# repeat its budgets 1, 2, 5, 10, 15 and must give the same numbers).
+name: adapt_lda_passes_dev
+experiment: adapt_lda
+participants: dev          # from configs/splits.yaml (10 people)
+seed: 42
+cross_subject: kfold
+n_folds: 5
+experiments: [E2, E3]
+
+preprocess:
+  band_hz: [20, 450]
+  order: 4
+  notch_hz: []
+  window_ms: 200
+  step_ms: 50
+  warmup_ms: 200
+
+features:
+  zc_thr_mv: 0.01
+  ssc_thr_mv: 0.01
+
+lda: {solver: lsqr, shrinkage: auto}
+
+calib_trials: 3
+budgets_s: [1x1, 1x2, 1x5, 2x1, 2x2, 2x5, 3x1, 3x2, 3x5]
+
+methods:
+  none: {}
+  unlabeled: {center: unlabeled}
+  means: {center: unlabeled, calibrate: means, tau_s: 0}
+  means_tau5: {center: unlabeled, calibrate: means, tau_s: 5}
+  scratch: {calibrate: scratch}
+
+figure: passes
+labels:
+  none: без адаптации
+  unlabeled: без меток
+  means: центры, tau 0
+  means_tau5: центры, tau 5 с
+  scratch: своя LDA с нуля

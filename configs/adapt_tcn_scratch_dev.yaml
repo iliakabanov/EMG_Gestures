@@ -1,0 +1,50 @@
+# Stage 5, TCN on the 10 dev participants: a personal TCN trained FROM SCRATCH on the calibration only, to separate
+# what the pretrained base (other people / earlier day) adds from what the architecture adds. Compare with
+# `full` of adapt_tcn_dev (pretrained base + AdaBN + fine-tuning) on the same people, sessions and test trials.
+# Recipe as E1 of stage 4: lr 1e-3, weight decay 0.01, ~300 steps of 64 random crops (crops cut to the calibration
+# length). One network per target session and budget, shared by E2 and E3. Base settings identical to
+# adapt_tcn_dev, so `none` reuses its cached base networks.
+name: adapt_tcn_scratch_dev
+experiment: adapt_tcn
+participants: dev          # from configs/splits.yaml (10 people)
+seed: 42
+cross_subject: kfold
+n_folds: 5
+experiments: [E2, E3]
+epochs: {E2: 36, E3: 36}
+
+preprocess:
+  band_hz: [20, 450]
+  order: 4
+  notch_hz: []
+  warmup_ms: 200
+  decimate: 2
+
+windows:
+  window_ms: 200
+  step_ms: 50
+
+model:
+  channels: 64
+  kernel: 3
+  dilations: [1, 2, 4, 8, 16, 20]   # receptive field 205 samples = 200 ms
+  dropout: 0.0
+
+train:
+  crop_ms: 1200
+  crops_per_trial: 4
+  batch: 64
+  lr: 0.001
+  weight_decay: 0.01
+
+calib_trials: 3
+budgets_s: [1x1, 2x1, 3x1, 3x5]   # "PxS": first S s of every gesture in each of the first P passes
+figure: passes
+
+methods:
+  none: {}                                                   # base network (cached), reference for the gain
+  scratch: {scratch: true, lr: 0.001, steps: 300}            # new TCN on the calibration only, E1-like recipe
+
+labels:
+  none: без адаптации
+  scratch: своя TCN с нуля

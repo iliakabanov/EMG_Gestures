@@ -1,0 +1,46 @@
+# FINAL run, TCN from scratch on the 5 test participants (run after adapt_tcn_scratch_dev; settings from dev,
+# nothing tuned here). Compare with `full` of adapt_tcn_test. Base settings identical to adapt_tcn_test, so `none`
+# reuses its cached base networks.
+name: adapt_tcn_scratch_test
+experiment: adapt_tcn
+participants: dev+test     # dev trains the E3 base network; only test participants are adapted to
+seed: 42
+cross_subject: holdout
+experiments: [E2, E3]
+epochs: {E2: 36, E3: 36}
+
+preprocess:
+  band_hz: [20, 450]
+  order: 4
+  notch_hz: []
+  warmup_ms: 200
+  decimate: 2
+
+windows:
+  window_ms: 200
+  step_ms: 50
+
+model:
+  channels: 64
+  kernel: 3
+  dilations: [1, 2, 4, 8, 16, 20]   # receptive field 205 samples = 200 ms
+  dropout: 0.0
+
+train:
+  crop_ms: 1200
+  crops_per_trial: 4
+  batch: 64
+  lr: 0.001
+  weight_decay: 0.01
+
+calib_trials: 3
+budgets_s: [1x1, 2x1, 3x1, 3x5]   # "PxS": first S s of every gesture in each of the first P passes
+figure: passes
+
+methods:
+  none: {}                                                   # base network (cached), reference for the gain
+  scratch: {scratch: true, lr: 0.001, steps: 300}            # as on dev
+
+labels:
+  none: без адаптации
+  scratch: своя TCN с нуля

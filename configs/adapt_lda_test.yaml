@@ -1,0 +1,40 @@
+# FINAL run of stage 5, LDA, on the 5 test participants. Settings frozen on dev (adapt_lda_dev,
+# adapt_lda_passes_dev): LDA log + shrink; calibration methods: class means shrunk to the training means
+# (tau 5 s) and a personal LDA fitted on the calibration only; budgets of 1-s passes plus everything.
+#   E2 (new day):    own session 1 -> sessions 2 and 3 of each test participant
+#   E3 (new person): one model on all 10 dev participants (all sessions) -> all 3 sessions of each test participant
+# Target session: trials 1-3 = calibration pool, trials 4-7 = test. Run once; nothing is tuned on these results.
+name: adapt_lda_test
+experiment: adapt_lda
+participants: dev+test     # dev trains the E3 model; only test participants are adapted to
+seed: 42
+cross_subject: holdout     # held-out participants = the `test` group of configs/splits.yaml
+experiments: [E2, E3]
+
+preprocess:
+  band_hz: [20, 450]
+  order: 4
+  notch_hz: []
+  window_ms: 200
+  step_ms: 50
+  warmup_ms: 200
+
+features:
+  zc_thr_mv: 0.01
+  ssc_thr_mv: 0.01
+
+lda: {solver: lsqr, shrinkage: auto}
+
+calib_trials: 3
+budgets_s: [1x1, 2x1, 3x1, 3x5]   # "PxS": first S s of every gesture in each of the first P passes
+
+methods:
+  none: {}
+  means_tau5: {center: unlabeled, calibrate: means, tau_s: 5}
+  scratch: {calibrate: scratch}
+
+figure: passes
+labels:
+  none: без адаптации
+  means_tau5: центры, tau 5 с
+  scratch: своя LDA с нуля

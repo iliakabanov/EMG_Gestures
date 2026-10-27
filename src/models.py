@@ -17,6 +17,16 @@ def _log_columns(X: np.ndarray, cols: np.ndarray) -> np.ndarray:
     return X
 
 
+def amplitude_columns(feat_cols: list[str]) -> np.ndarray:
+    """Positions of the MAV / RMS / WL columns."""
+    return np.flatnonzero([c.split("_")[0] in AMPLITUDE for c in feat_cols])
+
+
+def log_amplitude(X: np.ndarray, feat_cols: list[str]) -> np.ndarray:
+    """Copy of X with the log of the amplitude columns: a common gain k becomes the shift log k."""
+    return _log_columns(X, amplitude_columns(feat_cols))
+
+
 def make_model(name: str, params: dict | None = None, seed: int = 42,
                feat_cols: list[str] | None = None) -> Pipeline:
     """[log of amplitude features] + StandardScaler + classifier.
@@ -43,6 +53,5 @@ def make_model(name: str, params: dict | None = None, seed: int = 42,
     if log_amp:
         if feat_cols is None:
             raise ValueError("log_amp needs feat_cols")
-        cols = np.flatnonzero([c.split("_")[0] in AMPLITUDE for c in feat_cols])
-        steps.append(FunctionTransformer(_log_columns, kw_args={"cols": cols}))
+        steps.append(FunctionTransformer(_log_columns, kw_args={"cols": amplitude_columns(feat_cols)}))
     return make_pipeline(*steps, StandardScaler(), clf)

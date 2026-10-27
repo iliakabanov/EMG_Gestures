@@ -1,0 +1,44 @@
+# Stage 5, LDA log + shrink on the 10 dev participants: adaptation to a new day (E2) and a new person (E3).
+# Target session = a session the base model has not seen: trials 1-3 are the calibration pool, trials 4-7 the test
+# (the same for every method, so all numbers compare). E3 uses the same 5 folds as the TCN (train on 8 people).
+# Settings chosen here (tau_s, which normalisation) go to the test config unchanged.
+name: adapt_lda_dev
+experiment: adapt_lda
+participants: dev          # from configs/splits.yaml (10 people)
+seed: 42
+cross_subject: kfold
+n_folds: 5
+experiments: [E2, E3]
+
+preprocess:
+  band_hz: [20, 450]
+  order: 4
+  notch_hz: []
+  window_ms: 200
+  step_ms: 50
+  warmup_ms: 200
+
+features:
+  zc_thr_mv: 0.01
+  ssc_thr_mv: 0.01
+
+lda: {solver: lsqr, shrinkage: auto}   # amplitude features are log-transformed in adapt.py
+
+calib_trials: 3            # calibration pool: trials 1-3 of the target session; test: trials 4-7
+budgets_s: [1, 2, 5, 10, 15]   # seconds of holding per gesture; user time = 17 x budget
+
+methods:
+  none: {}                                         # base model as is
+  rest: {center: rest, rest_s: 5}                  # no labels: shift by the mean of the first 5 s of rest
+  unlabeled: {center: unlabeled}                   # no labels: shift by the mean of all calibration windows
+  means: {center: unlabeled, calibrate: means, tau_s: 0}      # labels: class means from calibration only
+  means_tau5: {center: unlabeled, calibrate: means, tau_s: 5} # labels: shrunk to training means, a = s / (s + 5)
+  scratch: {calibrate: scratch}                    # labels: personal LDA on the calibration data only
+
+labels:                    # legend of the figure
+  none: без адаптации
+  rest: нормализация по 5 с покоя
+  unlabeled: нормализация по жестам без меток
+  means: калибровка средних (tau 0)
+  means_tau5: калибровка средних (tau 5 с)
+  scratch: своя LDA только на калибровке
