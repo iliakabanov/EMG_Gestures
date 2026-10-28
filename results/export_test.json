@@ -1,0 +1,595 @@
+{
+  "config": {
+    "name": "export_test",
+    "experiment": "export",
+    "participants": "dev+test",
+    "seed": 42,
+    "cross_subject": "holdout",
+    "epochs": {
+      "E3": 36
+    },
+    "preprocess": {
+      "band_hz": [
+        20,
+        450
+      ],
+      "order": 4,
+      "notch_hz": [],
+      "warmup_ms": 200,
+      "decimate": 2
+    },
+    "windows": {
+      "window_ms": 200,
+      "step_ms": 50
+    },
+    "model": {
+      "channels": 64,
+      "kernel": 3,
+      "dilations": [
+        1,
+        2,
+        4,
+        8,
+        16,
+        20
+      ],
+      "dropout": 0.0
+    },
+    "train": {
+      "crop_ms": 1200,
+      "crops_per_trial": 4,
+      "batch": 64,
+      "lr": 0.001,
+      "weight_decay": 0.01
+    },
+    "calibration": {
+      "budget": "3x1"
+    },
+    "calib_trials": 3,
+    "adapt": {
+      "unlabeled": "adabn",
+      "finetune": "full",
+      "lr": 0.0001,
+      "steps": 200
+    },
+    "quant_calib": {
+      "n_windows": 1000
+    },
+    "variants": {
+      "fp32": {
+        "mode": "fp32"
+      },
+      "dynamic": {
+        "mode": "dynamic"
+      },
+      "static_own": {
+        "mode": "static",
+        "method": "minmax",
+        "calib": "own"
+      },
+      "static_minmax": {
+        "mode": "static",
+        "method": "minmax",
+        "calib": "train"
+      },
+      "static": {
+        "mode": "static",
+        "method": "percentile",
+        "calib": "train"
+      },
+      "static_mixed": {
+        "mode": "static",
+        "method": "percentile",
+        "calib": "train",
+        "keep_fp32": [
+          "input"
+        ]
+      }
+    },
+    "benchmark": {
+      "threads": 1,
+      "runs": 2000,
+      "warmup": 200
+    },
+    "budget": {
+      "sweep": "stream_dev",
+      "stream": "stream_test",
+      "variant": "static_mixed",
+      "filter_at_hz": [
+        56,
+        100,
+        150
+      ]
+    },
+    "labels": {
+      "torch_fp32": "PyTorch fp32",
+      "fp32": "ONNX fp32",
+      "dynamic": "int8 динамич.",
+      "static_own": "int8 статич.,\nокна своей калибровки",
+      "static_minmax": "int8 статич.,\nMinMax",
+      "static": "int8 статич.,\nPercentile",
+      "static_mixed": "int8, вход\nв fp32"
+    }
+  },
+  "finished": "2026-10-28T20:44:22",
+  "participants": [
+    11,
+    21,
+    24,
+    27,
+    38,
+    6,
+    22,
+    31,
+    35,
+    40,
+    5,
+    8,
+    17,
+    19,
+    25
+  ],
+  "model_info": {
+    "params": 151697,
+    "macs_per_position": 149312,
+    "macs_window": 30608960,
+    "macs_streaming": 7614912,
+    "window_vs_stream_max_abs": 0.0
+  },
+  "filter_group_delay_ms": {
+    "56": 3.6800998041245325,
+    "100": 1.6925850626532912,
+    "150": 1.2505091497097918
+  },
+  "summary": [
+    {
+      "variant": "torch_fp32",
+      "mean": 0.8362,
+      "sd": 0.0749,
+      "min": 0.7104,
+      "max": 0.9074,
+      "macro_f1": 0.8329,
+      "diff_mean": 0.0,
+      "diff_sd": 0.0,
+      "n_better": 0,
+      "n_worse": 0,
+      "n": 5,
+      "agree_mean": 1.0,
+      "agree_min": 1.0
+    },
+    {
+      "variant": "fp32",
+      "mean": 0.8361,
+      "sd": 0.0749,
+      "min": 0.7104,
+      "max": 0.9073,
+      "macro_f1": 0.8328,
+      "diff_mean": -0.0001,
+      "diff_sd": 0.0001,
+      "n_better": 2,
+      "n_worse": 3,
+      "n": 5,
+      "agree_mean": 0.9998,
+      "agree_min": 0.9996
+    },
+    {
+      "variant": "dynamic",
+      "mean": 0.8359,
+      "sd": 0.0718,
+      "min": 0.7165,
+      "max": 0.9069,
+      "macro_f1": 0.8328,
+      "diff_mean": -0.0003,
+      "diff_sd": 0.0038,
+      "n_better": 1,
+      "n_worse": 4,
+      "n": 5,
+      "agree_mean": 0.9775,
+      "agree_min": 0.9602
+    },
+    {
+      "variant": "static_own",
+      "mean": 0.8228,
+      "sd": 0.0812,
+      "min": 0.6892,
+      "max": 0.9043,
+      "macro_f1": 0.8178,
+      "diff_mean": -0.0134,
+      "diff_sd": 0.0091,
+      "n_better": 0,
+      "n_worse": 5,
+      "n": 5,
+      "agree_mean": 0.9381,
+      "agree_min": 0.8825
+    },
+    {
+      "variant": "static_minmax",
+      "mean": 0.7551,
+      "sd": 0.0618,
+      "min": 0.6561,
+      "max": 0.8111,
+      "macro_f1": 0.7492,
+      "diff_mean": -0.0811,
+      "diff_sd": 0.0371,
+      "n_better": 0,
+      "n_worse": 5,
+      "n": 5,
+      "agree_mean": 0.833,
+      "agree_min": 0.8034
+    },
+    {
+      "variant": "static",
+      "mean": 0.8046,
+      "sd": 0.0754,
+      "min": 0.6773,
+      "max": 0.8788,
+      "macro_f1": 0.801,
+      "diff_mean": -0.0316,
+      "diff_sd": 0.014,
+      "n_better": 0,
+      "n_worse": 5,
+      "n": 5,
+      "agree_mean": 0.9062,
+      "agree_min": 0.8526
+    },
+    {
+      "variant": "static_mixed",
+      "mean": 0.8286,
+      "sd": 0.0767,
+      "min": 0.7012,
+      "max": 0.9012,
+      "macro_f1": 0.8237,
+      "diff_mean": -0.0076,
+      "diff_sd": 0.0079,
+      "n_better": 0,
+      "n_worse": 5,
+      "n": 5,
+      "agree_mean": 0.9617,
+      "agree_min": 0.9324
+    }
+  ],
+  "benchmark": [
+    {
+      "variant": "torch_fp32",
+      "size_kb": 598.6602,
+      "latency_ms_median": 2.5316,
+      "latency_ms_p90": 3.012,
+      "latency_ms_p99": 3.4904
+    },
+    {
+      "variant": "fp32",
+      "size_kb": 628.1953,
+      "latency_ms_median": 0.5535,
+      "latency_ms_p90": 0.637,
+      "latency_ms_p99": 0.9012
+    },
+    {
+      "variant": "dynamic",
+      "size_kb": 197.2021,
+      "latency_ms_median": 6.901,
+      "latency_ms_p90": 7.3984,
+      "latency_ms_p99": 7.9316
+    },
+    {
+      "variant": "static_own",
+      "size_kb": 214.7275,
+      "latency_ms_median": 0.239,
+      "latency_ms_p90": 0.2633,
+      "latency_ms_p99": 0.3988
+    },
+    {
+      "variant": "static_minmax",
+      "size_kb": 214.7275,
+      "latency_ms_median": 0.2398,
+      "latency_ms_p90": 0.2726,
+      "latency_ms_p99": 0.4252
+    },
+    {
+      "variant": "static",
+      "size_kb": 214.7285,
+      "latency_ms_median": 0.2398,
+      "latency_ms_p90": 0.2739,
+      "latency_ms_p99": 0.4354
+    },
+    {
+      "variant": "static_mixed",
+      "size_kb": 215.1182,
+      "latency_ms_median": 0.2561,
+      "latency_ms_p90": 0.292,
+      "latency_ms_p99": 0.4763
+    }
+  ],
+  "latency_budget": [
+    {
+      "component": "фильтр 20–450 Гц: групповая задержка на пике спектра",
+      "ms": 3.6800998041245325,
+      "source": "рассчитано"
+    },
+    {
+      "component": "сетка решений: ожидание следующего решения (шаг / 2)",
+      "ms": 25.0,
+      "source": "оценка"
+    },
+    {
+      "component": "окно 200 мс: накопление жеста до уверенного решения",
+      "ms": 67.64150019587547,
+      "source": "этап 6 − две строки выше"
+    },
+    {
+      "component": "сглаживание τ = 250 мс",
+      "ms": 180.0537,
+      "source": "этап 6"
+    },
+    {
+      "component": "минимальная длительность 100 мс",
+      "ms": 101.9776,
+      "source": "этап 6"
+    },
+    {
+      "component": "инференс (CPU ноутбука, 1 поток)",
+      "ms": 0.25610000011511147,
+      "source": "этап 8"
+    },
+    {
+      "component": "итого (dev)",
+      "ms": 378.6090000001151,
+      "source": "этап 6, dev: 378 мс + инференс"
+    },
+    {
+      "component": "итого (test)",
+      "ms": 378.2346000001151,
+      "source": "этап 6, test: 378 мс + инференс"
+    }
+  ],
+  "per_participant": [
+    {
+      "variant": "torch_fp32",
+      "participant": 5,
+      "bal_acc": 0.847,
+      "macro_f1": 0.8446,
+      "agree": 1.0
+    },
+    {
+      "variant": "fp32",
+      "participant": 5,
+      "bal_acc": 0.847,
+      "macro_f1": 0.8445,
+      "agree": 0.9998
+    },
+    {
+      "variant": "dynamic",
+      "participant": 5,
+      "bal_acc": 0.846,
+      "macro_f1": 0.8437,
+      "agree": 0.9787
+    },
+    {
+      "variant": "static_own",
+      "participant": 5,
+      "bal_acc": 0.8224,
+      "macro_f1": 0.8141,
+      "agree": 0.9168
+    },
+    {
+      "variant": "static_minmax",
+      "participant": 5,
+      "bal_acc": 0.7526,
+      "macro_f1": 0.7431,
+      "agree": 0.8099
+    },
+    {
+      "variant": "static",
+      "participant": 5,
+      "bal_acc": 0.8153,
+      "macro_f1": 0.8083,
+      "agree": 0.902
+    },
+    {
+      "variant": "static_mixed",
+      "participant": 5,
+      "bal_acc": 0.8266,
+      "macro_f1": 0.818,
+      "agree": 0.9445
+    },
+    {
+      "variant": "torch_fp32",
+      "participant": 8,
+      "bal_acc": 0.7104,
+      "macro_f1": 0.7066,
+      "agree": 1.0
+    },
+    {
+      "variant": "fp32",
+      "participant": 8,
+      "bal_acc": 0.7104,
+      "macro_f1": 0.7066,
+      "agree": 0.9997
+    },
+    {
+      "variant": "dynamic",
+      "participant": 8,
+      "bal_acc": 0.7165,
+      "macro_f1": 0.7131,
+      "agree": 0.9602
+    },
+    {
+      "variant": "static_own",
+      "participant": 8,
+      "bal_acc": 0.6892,
+      "macro_f1": 0.6834,
+      "agree": 0.8825
+    },
+    {
+      "variant": "static_minmax",
+      "participant": 8,
+      "bal_acc": 0.6561,
+      "macro_f1": 0.6531,
+      "agree": 0.8071
+    },
+    {
+      "variant": "static",
+      "participant": 8,
+      "bal_acc": 0.6773,
+      "macro_f1": 0.6747,
+      "agree": 0.8526
+    },
+    {
+      "variant": "static_mixed",
+      "participant": 8,
+      "bal_acc": 0.7012,
+      "macro_f1": 0.6962,
+      "agree": 0.9324
+    },
+    {
+      "variant": "torch_fp32",
+      "participant": 17,
+      "bal_acc": 0.8736,
+      "macro_f1": 0.8709,
+      "agree": 1.0
+    },
+    {
+      "variant": "fp32",
+      "participant": 17,
+      "bal_acc": 0.8734,
+      "macro_f1": 0.8707,
+      "agree": 0.9996
+    },
+    {
+      "variant": "dynamic",
+      "participant": 17,
+      "bal_acc": 0.8707,
+      "macro_f1": 0.8683,
+      "agree": 0.9806
+    },
+    {
+      "variant": "static_own",
+      "participant": 17,
+      "bal_acc": 0.8647,
+      "macro_f1": 0.8614,
+      "agree": 0.9598
+    },
+    {
+      "variant": "static_minmax",
+      "participant": 17,
+      "bal_acc": 0.7523,
+      "macro_f1": 0.748,
+      "agree": 0.8034
+    },
+    {
+      "variant": "static",
+      "participant": 17,
+      "bal_acc": 0.8218,
+      "macro_f1": 0.8202,
+      "agree": 0.9033
+    },
+    {
+      "variant": "static_mixed",
+      "participant": 17,
+      "bal_acc": 0.8719,
+      "macro_f1": 0.8688,
+      "agree": 0.9784
+    },
+    {
+      "variant": "torch_fp32",
+      "participant": 19,
+      "bal_acc": 0.8426,
+      "macro_f1": 0.8371,
+      "agree": 1.0
+    },
+    {
+      "variant": "fp32",
+      "participant": 19,
+      "bal_acc": 0.8427,
+      "macro_f1": 0.8372,
+      "agree": 0.9999
+    },
+    {
+      "variant": "dynamic",
+      "participant": 19,
+      "bal_acc": 0.8396,
+      "macro_f1": 0.8339,
+      "agree": 0.9787
+    },
+    {
+      "variant": "static_own",
+      "participant": 19,
+      "bal_acc": 0.8333,
+      "macro_f1": 0.8283,
+      "agree": 0.9529
+    },
+    {
+      "variant": "static_minmax",
+      "participant": 19,
+      "bal_acc": 0.8111,
+      "macro_f1": 0.8036,
+      "agree": 0.9061
+    },
+    {
+      "variant": "static",
+      "participant": 19,
+      "bal_acc": 0.8301,
+      "macro_f1": 0.8252,
+      "agree": 0.944
+    },
+    {
+      "variant": "static_mixed",
+      "participant": 19,
+      "bal_acc": 0.842,
+      "macro_f1": 0.837,
+      "agree": 0.9792
+    },
+    {
+      "variant": "torch_fp32",
+      "participant": 25,
+      "bal_acc": 0.9074,
+      "macro_f1": 0.9052,
+      "agree": 1.0
+    },
+    {
+      "variant": "fp32",
+      "participant": 25,
+      "bal_acc": 0.9073,
+      "macro_f1": 0.9051,
+      "agree": 0.9998
+    },
+    {
+      "variant": "dynamic",
+      "participant": 25,
+      "bal_acc": 0.9069,
+      "macro_f1": 0.9049,
+      "agree": 0.9894
+    },
+    {
+      "variant": "static_own",
+      "participant": 25,
+      "bal_acc": 0.9043,
+      "macro_f1": 0.902,
+      "agree": 0.9787
+    },
+    {
+      "variant": "static_minmax",
+      "participant": 25,
+      "bal_acc": 0.8034,
+      "macro_f1": 0.7983,
+      "agree": 0.8385
+    },
+    {
+      "variant": "static",
+      "participant": 25,
+      "bal_acc": 0.8788,
+      "macro_f1": 0.8765,
+      "agree": 0.9291
+    },
+    {
+      "variant": "static_mixed",
+      "participant": 25,
+      "bal_acc": 0.9012,
+      "macro_f1": 0.8985,
+      "agree": 0.9738
+    }
+  ],
+  "scores_table": "results\\export_test_scores.csv",
+  "figures": [
+    "reports\\figures\\08_quant_export_test.png"
+  ]
+}

@@ -624,9 +624,92 @@ def run_robust_tcn(cfg: dict) -> dict:
     return {"participants": participants, **_robust_outputs(rows, cfg["name"])}
 
 
+def run_export(cfg: dict) -> dict:
+    """Stage 8: the E3 TCN adapted to every target session (stage-5 recipe) is exported to ONNX and quantized to
+    int8 by every variant; accuracy on the session's test trials, size, CPU latency, operations, latency budget.
+    See src/export.py."""
+    import pandas as pd
+    import torch
+
+    import adapt
+    import export
+    import signals
+    import tcn
+    from data import FS
+    from preprocess import design_filter, ms_to_samples
+
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+
+    participants = resolve_participants(cfg["participants"])
+    idx = build_index()
+    idx = idx[idx.participant.isin(participants)]
+    missing = sorted(set(participants) - set(idx.participant))
+    if missing:
+        raise FileNotFoundError(f"no local data for participants {missing}; run src/data.py first")
+
+    meta, X = signals.signal_table(idx, cfg["preprocess"])
+    y = meta.gesture.to_numpy() - 1
+    fs = signals.effective_fs(cfg["preprocess"]["decimate"])
+    win = ms_to_samples(cfg["windows"]["window_ms"], fs)
+    step = ms_to_samples(cfg["windows"]["step_ms"], fs)
+    ends = tcn.window_ends(win, step, (X.shape[2] - win) // step + 1)
+    cfg = {**cfg, "crop": ms_to_samples(cfg["train"]["crop_ms"], fs)}
+    test_ps = resolve_participants("test") if cfg["cross_subject"] == "holdout" else None
+    work = ROOT / "data" / "cache" / "onnx" / cfg["name"]
+    seed = cfg.get("seed", 42)
+
+    bc, pre = cfg["budget"], cfg["preprocess"]
+    sos = design_filter(band_hz=tuple(pre["band_hz"]), order=pre["order"], notch_hz=tuple(pre["notch_hz"]))
+    delays = export.group_delay_ms(sos, FS, bc["filter_at_hz"])
+    read = lambda name: json.loads((ROOT / "results" / f"{name}.json").read_text(encoding="utf-8"))
+    sweep, total = read(bc["sweep"]), read(bc["stream"])
+    budget = lambda infer: export.latency_budget(sweep, "tcn", "E3", delays[0], cfg["windows"]["step_ms"], infer,
+                                                 total)
+    budget(0.0)                            # fail now, not after the long loop
+
+    rows, bench, info = [], None, {}
+    for split in _target_splits(meta, "E3", cfg, test_ps):
+        base = adapt.base_tcn(X, y, cfg, participants, split, cfg["epochs"]["E3"], device)
+        if base.receptive_field != win:
+            raise ValueError(f"receptive field {base.receptive_field} != window {win} samples")
+        W_train = export.random_windows(X, np.flatnonzero(split.train), cfg["quant_calib"]["n_windows"], win, seed)
+        for key in meta[split.test].groupby(["participant", "session"]).indices:
+            sess = split.test & (meta.participant.to_numpy() == key[0]) & (meta.session.to_numpy() == key[1])
+            r, art = export.evaluate_session(base, X, meta, sess, cfg, ends, fs, device, W_train, work,
+                                             {"experiment": "E3", "model": "tcn", "split": split.name})
+            rows += r
+            if bench is None:              # one architecture: time and count it once, on the first session
+                bench = export.benchmark(art["model"], art["paths"], cfg)
+                info = {**export.operations(art["model"], step),
+                        "window_vs_stream_max_abs": export.check_window(art["model"], X[sess], ends)}
+            print(f"E3 {split.name} p{key[0]}/s{key[1]} export done", flush=True)
+
+    scores = pd.DataFrame(rows)
+    csv_path = ROOT / "results" / f"{cfg['name']}_scores.csv"
+    scores.to_csv(csv_path, index=False)
+    pp = export.per_participant(scores)
+    bench = pd.DataFrame(bench)
+
+    infer = float(bench.set_index("variant").loc[bc["variant"], "latency_ms_median"])
+    figures = [export.plot_quant(pp, bench, cfg["labels"], cfg["name"])]
+    return {
+        "participants": participants,
+        "model_info": info,
+        "filter_group_delay_ms": dict(zip(map(str, bc["filter_at_hz"]), delays)),
+        "summary": export.summary(pp).round(4).to_dict("records"),
+        "benchmark": bench.round(4).to_dict("records"),
+        "latency_budget": budget(infer),
+        "per_participant": pp.round(4).to_dict("records"),
+        "scores_table": str(csv_path.relative_to(ROOT)),
+        "figures": [str(Path(f).relative_to(ROOT)) for f in figures],
+    }
+
+
 RUNNERS = {"quality": run_quality, "baseline": run_baseline, "tcn": run_tcn,
            "adapt_lda": run_adapt_lda, "adapt_tcn": run_adapt_tcn, "stream": run_stream,
-           "robust_lda": run_robust_lda, "robust_tcn": run_robust_tcn}
+           "robust_lda": run_robust_lda, "robust_tcn": run_robust_tcn, "export": run_export}
 
 
 def _to_jsonable(o):

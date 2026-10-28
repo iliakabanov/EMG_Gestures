@@ -1,0 +1,67 @@
+# FINAL run of stage 8 on the 5 test participants. TCN, E3 (new person): one base network on all 10 dev
+# participants (the adapt_tcn_test network, cached), adapted to every session of each test participant with the
+# stage-5 recipe (AdaBN + fine-tuning all weights on the 3x1 calibration), test on trials 4-7.
+# The same variants as export_dev, for the report. Frozen on dev (export_dev), with the rule
+#   1) drop variants that are not faster than ONNX fp32 (dynamic: 6.8 vs 0.54 ms);
+#   2) among the rest, the smallest accuracy loss against PyTorch fp32, mean and worst session
+# the deployed variant is static_mixed (dev: -0.6 +- 0.6 pp, worst session -2.5 pp, 0.26 ms, 215 KB).
+# Run once; nothing is tuned on these results.
+name: export_test
+experiment: export
+participants: dev+test     # dev trains the E3 network; only test participants are adapted to
+seed: 42
+cross_subject: holdout     # held-out participants = the `test` group of configs/splits.yaml
+epochs: {E3: 36}
+
+preprocess:                # identical to adapt_tcn_test (shared caches)
+  band_hz: [20, 450]
+  order: 4
+  notch_hz: []
+  warmup_ms: 200
+  decimate: 2
+
+windows:
+  window_ms: 200
+  step_ms: 50
+
+model:
+  channels: 64
+  kernel: 3
+  dilations: [1, 2, 4, 8, 16, 20]   # receptive field 205 samples = 200 ms
+  dropout: 0.0
+
+train:
+  crop_ms: 1200
+  crops_per_trial: 4
+  batch: 64
+  lr: 0.001
+  weight_decay: 0.01
+
+calibration: {budget: 3x1}           # first 1 s of every gesture in trials 1, 2, 3
+calib_trials: 3
+adapt: {unlabeled: adabn, finetune: full, lr: 0.0001, steps: 200}
+
+quant_calib: {n_windows: 1000}       # windows of the training people for static ranges (calib: train)
+variants:
+  fp32: {mode: fp32}
+  dynamic: {mode: dynamic}
+  static_own: {mode: static, method: minmax, calib: own}
+  static_minmax: {mode: static, method: minmax, calib: train}
+  static: {mode: static, method: percentile, calib: train}
+  static_mixed: {mode: static, method: percentile, calib: train, keep_fp32: [input]}
+
+benchmark: {threads: 1, runs: 2000, warmup: 200}
+budget:
+  sweep: stream_dev                  # stage-6 post-processing sweep: decomposition of the latency (test has none)
+  stream: stream_test                # stage-6 latency at the frozen operating point, test participants (total)
+  variant: static_mixed              # the deployed variant (frozen on dev)
+  filter_at_hz: [56, 100, 150]
+
+labels:
+  torch_fp32: PyTorch fp32
+  fp32: ONNX fp32
+  dynamic: int8 динамич.
+  static_own: "int8 статич.,\nокна своей калибровки"
+  static_minmax: "int8 статич.,\nMinMax"
+  static: "int8 статич.,\nPercentile"
+  static_mixed: "int8, вход\nв fp32"

@@ -1,0 +1,70 @@
+# Stage 8 on the 10 dev participants: the best stream model (TCN, E3 = new person, stage-5 recipe: base network on
+# the other people, 5 folds of 2 as in adapt_tcn_dev, cached; AdaBN + fine-tuning all weights on the 3x1 calibration)
+# exported to ONNX and quantized to int8 by every variant; test on trials 4-7 of every target session.
+# Variants are compared here; test gets the same list.
+#   fp32           ONNX float (must equal PyTorch)
+#   dynamic        int8 weights, activation ranges measured on every call
+#   static_own     int8 everything, ranges (MinMax) from the session's own 3x1 calibration windows
+#   static_minmax  int8 everything, ranges (MinMax) from 1000 random windows of the training people
+#   static         int8 everything, ranges (Percentile 0.001-99.999 %) from the same windows
+#   static_mixed   as static, but the input scaling and the first 1x1 convolution stay float
+name: export_dev
+experiment: export
+participants: dev          # from configs/splits.yaml (10 people)
+seed: 42                   # also fixes the E3 folds (same as adapt_tcn_dev)
+cross_subject: kfold
+n_folds: 5
+epochs: {E3: 36}
+
+preprocess:                # identical to adapt_tcn_dev (shared caches)
+  band_hz: [20, 450]
+  order: 4
+  notch_hz: []
+  warmup_ms: 200
+  decimate: 2
+
+windows:
+  window_ms: 200
+  step_ms: 50
+
+model:
+  channels: 64
+  kernel: 3
+  dilations: [1, 2, 4, 8, 16, 20]   # receptive field 205 samples = 200 ms
+  dropout: 0.0
+
+train:
+  crop_ms: 1200
+  crops_per_trial: 4
+  batch: 64
+  lr: 0.001
+  weight_decay: 0.01
+
+calibration: {budget: 3x1}           # first 1 s of every gesture in trials 1, 2, 3
+calib_trials: 3
+adapt: {unlabeled: adabn, finetune: full, lr: 0.0001, steps: 200}
+
+quant_calib: {n_windows: 1000}       # windows of the training people for static ranges (calib: train)
+variants:
+  fp32: {mode: fp32}
+  dynamic: {mode: dynamic}
+  static_own: {mode: static, method: minmax, calib: own}
+  static_minmax: {mode: static, method: minmax, calib: train}
+  static: {mode: static, method: percentile, calib: train}
+  static_mixed: {mode: static, method: percentile, calib: train, keep_fp32: [input]}
+
+benchmark: {threads: 1, runs: 2000, warmup: 200}
+budget:
+  sweep: stream_dev                  # stage-6 post-processing sweep: decomposition of the latency
+  stream: stream_dev                 # stage-6 latency at the frozen operating point (total)
+  variant: static_mixed              # whose inference time goes into the budget
+  filter_at_hz: [56, 100, 150]       # spectrum peak (stage 7) and above
+
+labels:
+  torch_fp32: PyTorch fp32
+  fp32: ONNX fp32
+  dynamic: int8 динамич.
+  static_own: "int8 статич.,\nокна своей калибровки"
+  static_minmax: "int8 статич.,\nMinMax"
+  static: "int8 статич.,\nPercentile"
+  static_mixed: "int8, вход\nв fp32"
