@@ -328,8 +328,163 @@ def run_adapt_tcn(cfg: dict) -> dict:
     return {"participants": participants, **_adapt_outputs(rows, cfg)}
 
 
+def stream_cache_path(cfg: dict) -> Path:
+    """Cache file of the stage-6 probabilities: keyed by everything that defines the streams and the models
+    (not by the post-processing grid, the operating-point rule or the frozen settings)."""
+    import hashlib
+
+    keep = ["participants", "seed", "cross_subject", "n_folds", "experiments", "epochs", "preprocess", "windows",
+            "features", "model", "train", "stream", "calibration", "lda", "tcn_adapt"]
+    digest = hashlib.sha1(json.dumps({k: cfg.get(k) for k in keep}, sort_keys=True, default=str).encode()).hexdigest()[:10]
+    return ROOT / "data" / "cache" / f"stream_probs_{digest}.pkl"
+
+
+def _stream_probs(cfg: dict) -> tuple[dict, dict, dict]:
+    """Stage 6, expensive part: build the streams, calibrate both models on every target session (budget from
+    the calibration trials) and compute their probabilities on the streams. Cached (`stream_cache_path`) by
+    everything that defines streams and models, so the post-processing sweep can be re-run cheaply.
+
+    Returns probs {(model, experiment, participant, session): (t, P, classes, lead_s, end_s)},
+    truths {(participant, session): events table} and stream info {(participant, session): unique rest seconds}.
+    """
+    import copy
+    import pickle
+
+    import torch
+
+    import adapt
+    import signals
+    import streaming
+    import tcn
+    from data import FS, WRIST_IDX
+    from features import feature_names, feature_table
+    from preprocess import design_filter, filter_causal, ms_to_samples
+
+    cache = stream_cache_path(cfg)
+    if cache.exists():
+        print(f"probabilities from {cache.relative_to(ROOT)}", flush=True)
+        return pickle.loads(cache.read_bytes())
+
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+    participants = resolve_participants(cfg["participants"])
+    test_ps = resolve_participants("test") if cfg["cross_subject"] == "holdout" else None
+    idx = build_index()
+    idx = idx[idx.participant.isin(participants)]
+
+    pre, win_cfg, sc = cfg["preprocess"], cfg["windows"], cfg["stream"]
+    feat_cfg = {**{k: pre[k] for k in ["band_hz", "order", "notch_hz", "warmup_ms"]}, **win_cfg, **cfg["features"]}
+    channels = [f"W{i + 1}" for i in range(len(WRIST_IDX))]
+    feat_cols = feature_names(channels)
+    table = feature_table(idx, feat_cfg, channels)
+    meta, X = signals.signal_table(idx, pre)
+    y = meta.gesture.to_numpy() - 1
+    fs_dec = signals.effective_fs(pre["decimate"])
+    win, step = ms_to_samples(win_cfg["window_ms"]), ms_to_samples(win_cfg["step_ms"])
+    sos = design_filter(band_hz=tuple(pre["band_hz"]), order=pre["order"], notch_hz=tuple(pre["notch_hz"]))
+    budget = adapt.parse_budget(cfg["calibration"]["budget"])
+    tcfg = {**cfg, "crop": ms_to_samples(cfg["train"]["crop_ms"], fs_dec)}
+
+    streams, probs = {}, {}
+
+    def stream_of(p: int, s: int) -> tuple:
+        if (p, s) not in streams:
+            st = streaming.build_stream(p, s, sc["trials"], cfg.get("seed", 42), tuple(sc["gesture_s"]),
+                                        tuple(sc["rest_s"]), sc["lead_s"], sc["rise_ms"], sc["fall_ms"], sc["join_ms"])
+            x_filt, _ = filter_causal(st.x, sos)
+            streams[(p, s)] = (st, x_filt)
+        return streams[(p, s)]
+
+    lda_cache = {}
+    for exp in cfg["experiments"]:
+        for split in _target_splits(meta, exp, cfg, test_ps):
+            base = adapt.base_tcn(X, y, tcfg, participants, split, cfg["epochs"][exp], device)
+            for p, s in meta[split.test].groupby(["participant", "session"]).indices:
+                st, x_filt = stream_of(p, s)
+                end_s = len(st.x) / FS
+                if (p, s) not in lda_cache:      # personal LDA: the same for E2 and E3
+                    rows = ((table.participant == p) & (table.session == s)).to_numpy() & adapt.window_mask(table, budget)
+                    lda = make_lda(table, rows, feat_cols, cfg["lda"])
+                    lda_cache[(p, s)] = streaming.lda_probs(lda, x_filt, win, step, cfg["features"], feat_cols)
+                probs[("lda", exp, p, s)] = (*lda_cache[(p, s)], st.lead_s, end_s)
+
+                sess = split.test & (meta.participant.to_numpy() == p) & (meta.session.to_numpy() == s)
+                X_cal, y_cal = adapt.calib_signals(X, meta, sess, budget, pre["warmup_ms"] / 1000, fs_dec)
+                m = copy.deepcopy(base)
+                adapt.set_input_scale(m, X_cal)
+                adapt.adabn(m, X_cal, device)
+                adapt.finetune(m, X_cal, y_cal, cfg["tcn_adapt"], tcfg["crop"], cfg.get("seed", 42), device)
+                probs[("tcn", exp, p, s)] = (*streaming.tcn_probs(m, x_filt, win, step, pre["decimate"], device),
+                                             st.lead_s, end_s)
+                print(f"{exp} {split.name} p{p}/s{s}: stream {end_s:.0f} s, {len(st.events)} gestures", flush=True)
+
+    truths = {k: v[0].events for k, v in streams.items()}
+    info = {k: v[0].unique_rest_s for k, v in streams.items()}
+    cache.parent.mkdir(parents=True, exist_ok=True)
+    cache.write_bytes(pickle.dumps((probs, truths, info)))
+    return probs, truths, info
+
+
+def make_lda(table, rows: np.ndarray, feat_cols: list[str], params: dict):
+    """LDA (log of amplitude features + scaler + LDA) fitted on the given rows of a feature table."""
+    from models import log_amplitude, make_model
+
+    F = log_amplitude(table.loc[rows, feat_cols].to_numpy(), feat_cols)
+    return make_model("lda", params).fit(F, table.gesture.to_numpy()[rows])
+
+
+def run_stream(cfg: dict) -> dict:
+    """Stage 6: streaming recognition with event metrics. Post-processing is swept over `grid`; on dev the
+    operating point is chosen per model x experiment (most correct events at <= fa_target false activations per
+    minute and <= extra_max extra commands per gesture); on test the dev choice is given in `frozen`
+    ({model: {experiment: setting}}) and only reported (the threshold sweep is kept for the trade-off curve)."""
+    import pandas as pd
+
+    import streaming
+
+    probs, truths, info = _stream_probs(cfg)
+    step_s = cfg["windows"]["step_ms"] / 1000
+    frozen = cfg.get("frozen")
+    scores = []
+    for model, exp in sorted({k[:2] for k in probs}):
+        sub = {k: v for k, v in probs.items() if k[:2] == (model, exp)}
+        grid = dict(cfg["grid"])
+        if frozen:                               # keep the frozen smoothing / duration / refractory, sweep theta
+            f = frozen[model][exp]
+            grid.update(tau_ms=[f["tau_ms"]], min_ms=[f["min_ms"]], refractory_ms=[f["refractory_ms"]])
+            grid["theta"] = sorted(set(grid["theta"]) | {f["theta"]})
+        scores.append(streaming.sweep(sub, truths, grid, step_s, cfg["stream"]["tol_ms"] / 1000))
+    scores = pd.concat(scores, ignore_index=True)
+    csv_path = ROOT / "results" / f"{cfg['name']}_scores.csv"
+    scores.to_csv(csv_path, index=False)
+    pp = streaming.per_participant(scores)
+
+    if frozen:
+        sel = [pp[(pp.model == m) & (pp.experiment == e) & (pp.tau_ms == f["tau_ms"]) & (pp.min_ms == f["min_ms"])
+                  & (pp.refractory_ms == f["refractory_ms"]) & np.isclose(pp.theta, f["theta"])]
+               for m, by_exp in frozen.items() for e, f in by_exp.items()]
+        chosen = (pd.concat(sel).groupby(streaming.SETTING, as_index=False)[streaming.METRICS].mean())
+    else:
+        chosen = streaming.operating_points(pp, cfg["fa_target_per_min"], cfg.get("extra_max_per_gesture"))
+    at_point = pp.merge(chosen[streaming.SETTING], on=streaming.SETTING)
+    figures = [streaming.plot_tradeoff(pp, chosen, cfg["name"], cfg["fa_target_per_min"], cfg.get("labels"))]
+    curves = pp.groupby(streaming.SETTING, as_index=False)[streaming.METRICS].mean()
+    return {
+        "participants": sorted({int(k[2]) for k in probs}),
+        "n_streams": len(truths),
+        "stream_minutes_mean": round(float(np.mean([v[4] for v in probs.values()])) / 60, 2),
+        "unique_rest_s_per_session": round(float(np.mean(list(info.values()))), 1),
+        "operating_points": chosen.round(4).to_dict("records"),
+        "at_operating_point": at_point.round(4).to_dict("records"),
+        "curves_mean": curves.round(4).to_dict("records"),
+        "scores_table": str(csv_path.relative_to(ROOT)),
+        "figures": [str(Path(f).relative_to(ROOT)) for f in figures],
+    }
+
+
 RUNNERS = {"quality": run_quality, "baseline": run_baseline, "tcn": run_tcn,
-           "adapt_lda": run_adapt_lda, "adapt_tcn": run_adapt_tcn}
+           "adapt_lda": run_adapt_lda, "adapt_tcn": run_adapt_tcn, "stream": run_stream}
 
 
 def _to_jsonable(o):
