@@ -15,6 +15,8 @@ import torch
 from torch import nn
 from torch.nn import functional as F
 
+from data import ring_rotation
+
 
 class CausalConv1d(nn.Conv1d):
     """Conv1d that pads (kernel - 1) * dilation zeros on the left: no output depends on a future sample."""
@@ -82,15 +84,18 @@ def build(n_channels: int, n_classes: int, model_cfg: dict) -> TCN:
 
 
 def crop_loss(model: TCN, Xd: torch.Tensor, yd: torch.Tensor, trials: np.ndarray, starts: np.ndarray,
-              crop: int) -> torch.Tensor:
+              crop: int, perm: torch.Tensor | None = None) -> torch.Tensor:
     """Mean cross-entropy over the positions of each crop whose receptive field lies fully inside the crop.
 
     Args:
         Xd, yd: signals [N, C, T] and 0-based classes [N] on the model's device.
         trials, starts: trial index and first sample of every crop in the batch.
         crop: crop length, samples.
+        perm: optional channel order of every crop [B, C] (rotation augmentation).
     """
     xb = torch.stack([Xd[t, :, s:s + crop] for t, s in zip(trials, starts)])
+    if perm is not None:
+        xb = torch.gather(xb, 1, perm[:, :, None].expand(-1, -1, xb.shape[2]))
     logits = model(xb)[:, :, model.receptive_field - 1:]
     target = yd[torch.from_numpy(trials).to(Xd.device)][:, None].expand(-1, logits.shape[2])
     return F.cross_entropy(logits, target)
@@ -115,7 +120,9 @@ def fit(X: np.ndarray, y: np.ndarray, model_cfg: dict, train_cfg: dict, epochs: 
         X: training signals [N, C, T].
         y: class of each trial, 0-based [N].
         model_cfg: TCN constructor arguments (channels, kernel, dilations, optional dropout).
-        train_cfg: crop (samples), crops_per_trial (crops per trial per epoch), batch, lr, weight_decay.
+        train_cfg: crop (samples), crops_per_trial (crops per trial per epoch), batch, lr, weight_decay;
+            optional rotate: wrist-bracelet shifts (e.g. [-1, 0, 1]), one drawn at random for every crop
+            (augmentation; the input scale of every position is then its SD over the rotated mix).
         epochs: number of epochs.
         seed: seed for weights and crop sampling.
         device: "cuda" or "cpu".
@@ -131,7 +138,13 @@ def fit(X: np.ndarray, y: np.ndarray, model_cfg: dict, train_cfg: dict, epochs: 
     rng = np.random.default_rng(seed)
     n_classes = int(y.max()) + 1
     model = build(X.shape[1], n_classes, model_cfg).to(device)
-    model.scale.copy_(torch.from_numpy(X.std(axis=(0, 2)).reshape(1, -1, 1)))
+    var = X.var(axis=(0, 2))
+    rotations = None
+    if train_cfg.get("rotate"):
+        perms = np.stack([ring_rotation(s) for s in train_cfg["rotate"]])
+        var = var[perms].mean(axis=0)
+        rotations = torch.from_numpy(perms).to(device)
+    model.scale.copy_(torch.from_numpy(np.sqrt(var).astype(np.float32).reshape(1, -1, 1)))
     opt = torch.optim.AdamW(model.parameters(), lr=train_cfg["lr"], weight_decay=train_cfg["weight_decay"])
 
     Xd = torch.from_numpy(X).to(device)
@@ -145,7 +158,10 @@ def fit(X: np.ndarray, y: np.ndarray, model_cfg: dict, train_cfg: dict, epochs: 
         for i in range(0, len(trials), train_cfg["batch"]):
             ti = trials[i:i + train_cfg["batch"]]
             starts = rng.integers(0, T - crop + 1, size=len(ti))
-            loss = crop_loss(model, Xd, yd, ti, starts, crop)
+            perm = None
+            if rotations is not None:
+                perm = rotations[torch.from_numpy(rng.integers(0, len(rotations), size=len(ti))).to(device)]
+            loss = crop_loss(model, Xd, yd, ti, starts, crop, perm)
             opt.zero_grad(set_to_none=True)
             loss.backward()
             opt.step()

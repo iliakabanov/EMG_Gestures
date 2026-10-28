@@ -1,0 +1,60 @@
+# FINAL run of stage 7, TCN, on the 5 test participants, E3 (new person) with the stage-5 recipe frozen on dev
+# (robust_tcn_dev): one base network on all 10 dev participants (all sessions), calibration 3x1 (first 1 s of every
+# gesture in trials 1-3) on every session of each test participant, test on trials 4-7.
+#   rotation  the target session (calibration and test) seen through a bracelet turned by -1 / 0 / +1 electrode
+#             positions; base trained as is (the adapt_tcn_test network, cached) or with every training crop
+#             turned by a random -1 / 0 / +1 (one new network, ~15-20 min)
+#   failure   plain base, after the calibration 1 or 2 wrist channels fail on the test trials (all 12, all 66
+#             pairs): flat line, or noise of a normal amplitude without EMG
+# Run once; nothing is tuned on these results.
+name: robust_tcn_test
+experiment: robust_tcn
+participants: dev+test     # dev trains the E3 network; only test participants are adapted to
+seed: 42
+cross_subject: holdout     # held-out participants = the `test` group of configs/splits.yaml
+experiments: [E3]
+epochs: {E3: 36}
+
+preprocess:                # identical to adapt_tcn_test (shared caches)
+  band_hz: [20, 450]
+  order: 4
+  notch_hz: []
+  warmup_ms: 200
+  decimate: 2
+
+windows:
+  window_ms: 200
+  step_ms: 50
+
+model:
+  channels: 64
+  kernel: 3
+  dilations: [1, 2, 4, 8, 16, 20]   # receptive field 205 samples = 200 ms
+  dropout: 0.0
+
+train:
+  crop_ms: 1200
+  crops_per_trial: 4
+  batch: 64
+  lr: 0.001
+  weight_decay: 0.01
+
+bases:                     # overrides of `train`
+  plain: {}
+  rot_aug: {rotate: [-1, 0, 1]}
+
+calibration: {budget: 3x1}
+calib_trials: 3
+methods:
+  none: {}
+  full: {unlabeled: adabn, finetune: full, lr: 0.0001, steps: 200}
+
+rotation:
+  shifts: [-1, 0, 1]
+
+failure:
+  base: plain
+  n_failed: [1, 2]
+  modes: [zero, noise]
+  noise_rms_mv: 0.043      # median RMS of a wrist channel during gestures (stage 2, quality_dev)
+  bank: 200                # noise traces to draw from

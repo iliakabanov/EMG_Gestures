@@ -1,0 +1,4308 @@
+{
+  "config": {
+    "name": "robust_lda_dev",
+    "experiment": "robust_lda",
+    "participants": "dev",
+    "seed": 42,
+    "preprocess": {
+      "band_hz": [
+        20,
+        450
+      ],
+      "order": 4,
+      "notch_hz": [],
+      "window_ms": 200,
+      "step_ms": 50,
+      "warmup_ms": 200
+    },
+    "features": {
+      "zc_thr_mv": 0.01,
+      "ssc_thr_mv": 0.01
+    },
+    "lda": {
+      "solver": "lsqr",
+      "shrinkage": "auto"
+    },
+    "channel_sets": [
+      "wrist",
+      "ring3",
+      "ring4",
+      "forearm",
+      "forearm_wrist"
+    ],
+    "greedy": {},
+    "rates": {
+      "downsample": [
+        1,
+        2,
+        4,
+        8
+      ],
+      "antialias_ratio": 0.4,
+      "antialias_order": 8
+    },
+    "rotation": {
+      "shifts": [
+        -1,
+        0,
+        1
+      ],
+      "train_shifts": {
+        "plain": [
+          0
+        ],
+        "rot_aug": [
+          -1,
+          0,
+          1
+        ]
+      }
+    },
+    "failure": {
+      "n_failed": [
+        1,
+        2
+      ],
+      "modes": [
+        "zero",
+        "noise"
+      ],
+      "noise_rms_mv": 0.043
+    }
+  },
+  "finished": "2026-10-28T15:15:23",
+  "participants": [
+    11,
+    21,
+    24,
+    27,
+    38,
+    6,
+    22,
+    31,
+    35,
+    40
+  ],
+  "greedy_order": [
+    "W12",
+    "W9",
+    "W7",
+    "W11",
+    "W2",
+    "W10",
+    "W8",
+    "W5",
+    "W3",
+    "W1",
+    "W6",
+    "W4"
+  ],
+  "greedy_frozen": false,
+  "summary": {
+    "channels": [
+      {
+        "part": "channels",
+        "model": "lda",
+        "experiment": "E1",
+        "setting": "wrist",
+        "n_channels": 12.0,
+        "mean": 0.8831,
+        "sd": 0.0312,
+        "median": 0.8808,
+        "min": 0.8433,
+        "max": 0.9333,
+        "macro_f1": 0.8796,
+        "n": 10
+      },
+      {
+        "part": "channels",
+        "model": "lda",
+        "experiment": "E1",
+        "setting": "ring3",
+        "n_channels": 6.0,
+        "mean": 0.8281,
+        "sd": 0.034,
+        "median": 0.8245,
+        "min": 0.7871,
+        "max": 0.8801,
+        "macro_f1": 0.823,
+        "n": 10
+      },
+      {
+        "part": "channels",
+        "model": "lda",
+        "experiment": "E1",
+        "setting": "ring4",
+        "n_channels": 6.0,
+        "mean": 0.7957,
+        "sd": 0.0354,
+        "median": 0.7897,
+        "min": 0.7337,
+        "max": 0.8536,
+        "macro_f1": 0.7893,
+        "n": 10
+      },
+      {
+        "part": "channels",
+        "model": "lda",
+        "experiment": "E1",
+        "setting": "forearm",
+        "n_channels": 16.0,
+        "mean": 0.8579,
+        "sd": 0.0518,
+        "median": 0.8553,
+        "min": 0.7725,
+        "max": 0.9514,
+        "macro_f1": 0.854,
+        "n": 10
+      },
+      {
+        "part": "channels",
+        "model": "lda",
+        "experiment": "E1",
+        "setting": "forearm_wrist",
+        "n_channels": 28.0,
+        "mean": 0.9506,
+        "sd": 0.0276,
+        "median": 0.955,
+        "min": 0.8983,
+        "max": 0.991,
+        "macro_f1": 0.9497,
+        "n": 10
+      }
+    ],
+    "greedy": [
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 12.0,
+        "mean": 0.8831,
+        "sd": 0.0312,
+        "median": 0.8808,
+        "min": 0.8433,
+        "max": 0.9333,
+        "macro_f1": 0.8796,
+        "n": 10
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 11.0,
+        "mean": 0.8819,
+        "sd": 0.0306,
+        "median": 0.8816,
+        "min": 0.8405,
+        "max": 0.9271,
+        "macro_f1": 0.8786,
+        "n": 10
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 10.0,
+        "mean": 0.8752,
+        "sd": 0.0321,
+        "median": 0.8753,
+        "min": 0.8292,
+        "max": 0.9179,
+        "macro_f1": 0.8717,
+        "n": 10
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 9.0,
+        "mean": 0.8693,
+        "sd": 0.0285,
+        "median": 0.8746,
+        "min": 0.8266,
+        "max": 0.9044,
+        "macro_f1": 0.8653,
+        "n": 10
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 8.0,
+        "mean": 0.8592,
+        "sd": 0.0296,
+        "median": 0.8643,
+        "min": 0.8127,
+        "max": 0.9012,
+        "macro_f1": 0.8549,
+        "n": 10
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 7.0,
+        "mean": 0.8458,
+        "sd": 0.0331,
+        "median": 0.8514,
+        "min": 0.7881,
+        "max": 0.8908,
+        "macro_f1": 0.8412,
+        "n": 10
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 6.0,
+        "mean": 0.828,
+        "sd": 0.0347,
+        "median": 0.8342,
+        "min": 0.7757,
+        "max": 0.8772,
+        "macro_f1": 0.8234,
+        "n": 10
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 5.0,
+        "mean": 0.7996,
+        "sd": 0.0385,
+        "median": 0.8055,
+        "min": 0.7353,
+        "max": 0.8619,
+        "macro_f1": 0.7944,
+        "n": 10
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 4.0,
+        "mean": 0.7583,
+        "sd": 0.0422,
+        "median": 0.766,
+        "min": 0.6862,
+        "max": 0.8261,
+        "macro_f1": 0.7519,
+        "n": 10
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 3.0,
+        "mean": 0.6913,
+        "sd": 0.0486,
+        "median": 0.7034,
+        "min": 0.6073,
+        "max": 0.7536,
+        "macro_f1": 0.6825,
+        "n": 10
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 2.0,
+        "mean": 0.5866,
+        "sd": 0.0465,
+        "median": 0.6105,
+        "min": 0.5048,
+        "max": 0.6415,
+        "macro_f1": 0.5751,
+        "n": 10
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 1.0,
+        "mean": 0.3767,
+        "sd": 0.0325,
+        "median": 0.3634,
+        "min": 0.3254,
+        "max": 0.4268,
+        "macro_f1": 0.3626,
+        "n": 10
+      }
+    ],
+    "rate": [
+      {
+        "part": "rate",
+        "model": "lda",
+        "experiment": "E1",
+        "fs_hz": 2048.0,
+        "band_hi_hz": 450.0,
+        "mean": 0.8831,
+        "sd": 0.0312,
+        "median": 0.8808,
+        "min": 0.8433,
+        "max": 0.9333,
+        "macro_f1": 0.8796,
+        "n": 10
+      },
+      {
+        "part": "rate",
+        "model": "lda",
+        "experiment": "E1",
+        "fs_hz": 1024.0,
+        "band_hi_hz": 409.6,
+        "mean": 0.8797,
+        "sd": 0.031,
+        "median": 0.885,
+        "min": 0.8403,
+        "max": 0.9383,
+        "macro_f1": 0.8764,
+        "n": 10
+      },
+      {
+        "part": "rate",
+        "model": "lda",
+        "experiment": "E1",
+        "fs_hz": 512.0,
+        "band_hi_hz": 204.8,
+        "mean": 0.8364,
+        "sd": 0.0331,
+        "median": 0.8314,
+        "min": 0.7826,
+        "max": 0.9161,
+        "macro_f1": 0.8322,
+        "n": 10
+      },
+      {
+        "part": "rate",
+        "model": "lda",
+        "experiment": "E1",
+        "fs_hz": 256.0,
+        "band_hi_hz": 102.4,
+        "mean": 0.7379,
+        "sd": 0.0481,
+        "median": 0.7304,
+        "min": 0.689,
+        "max": 0.8515,
+        "macro_f1": 0.7327,
+        "n": 10
+      }
+    ],
+    "rotation": [
+      {
+        "part": "rotation",
+        "model": "lda",
+        "experiment": "E2",
+        "base": "plain",
+        "method": "none",
+        "shift": -1.0,
+        "mean": 0.1478,
+        "sd": 0.059,
+        "median": 0.1535,
+        "min": 0.0558,
+        "max": 0.225,
+        "macro_f1": 0.1146,
+        "n": 10
+      },
+      {
+        "part": "rotation",
+        "model": "lda",
+        "experiment": "E2",
+        "base": "plain",
+        "method": "none",
+        "shift": 0.0,
+        "mean": 0.5471,
+        "sd": 0.1423,
+        "median": 0.5348,
+        "min": 0.2963,
+        "max": 0.7486,
+        "macro_f1": 0.5245,
+        "n": 10
+      },
+      {
+        "part": "rotation",
+        "model": "lda",
+        "experiment": "E2",
+        "base": "plain",
+        "method": "none",
+        "shift": 1.0,
+        "mean": 0.1317,
+        "sd": 0.0435,
+        "median": 0.1279,
+        "min": 0.0666,
+        "max": 0.2094,
+        "macro_f1": 0.0951,
+        "n": 10
+      },
+      {
+        "part": "rotation",
+        "model": "lda",
+        "experiment": "E2",
+        "base": "rot_aug",
+        "method": "none",
+        "shift": -1.0,
+        "mean": 0.4148,
+        "sd": 0.1252,
+        "median": 0.3559,
+        "min": 0.297,
+        "max": 0.6731,
+        "macro_f1": 0.3863,
+        "n": 10
+      },
+      {
+        "part": "rotation",
+        "model": "lda",
+        "experiment": "E2",
+        "base": "rot_aug",
+        "method": "none",
+        "shift": 0.0,
+        "mean": 0.4365,
+        "sd": 0.1073,
+        "median": 0.4123,
+        "min": 0.2929,
+        "max": 0.6611,
+        "macro_f1": 0.4037,
+        "n": 10
+      },
+      {
+        "part": "rotation",
+        "model": "lda",
+        "experiment": "E2",
+        "base": "rot_aug",
+        "method": "none",
+        "shift": 1.0,
+        "mean": 0.3864,
+        "sd": 0.0974,
+        "median": 0.3616,
+        "min": 0.2465,
+        "max": 0.5403,
+        "macro_f1": 0.3546,
+        "n": 10
+      }
+    ],
+    "failure": [
+      {
+        "part": "failure",
+        "model": "lda",
+        "experiment": "E1",
+        "method": "none",
+        "mode": "none",
+        "n_failed": 0.0,
+        "mean": 0.8831,
+        "sd": 0.0312,
+        "median": 0.8808,
+        "min": 0.8433,
+        "max": 0.9333,
+        "macro_f1": 0.8796,
+        "n": 10
+      },
+      {
+        "part": "failure",
+        "model": "lda",
+        "experiment": "E1",
+        "method": "none",
+        "mode": "zero",
+        "n_failed": 1.0,
+        "mean": 0.0919,
+        "sd": 0.0093,
+        "median": 0.0902,
+        "min": 0.0793,
+        "max": 0.1094,
+        "macro_f1": 0.0347,
+        "n": 10
+      },
+      {
+        "part": "failure",
+        "model": "lda",
+        "experiment": "E1",
+        "method": "none",
+        "mode": "noise",
+        "n_failed": 1.0,
+        "mean": 0.3466,
+        "sd": 0.0693,
+        "median": 0.3574,
+        "min": 0.2381,
+        "max": 0.4276,
+        "macro_f1": 0.2979,
+        "n": 10
+      },
+      {
+        "part": "failure",
+        "model": "lda",
+        "experiment": "E1",
+        "method": "none",
+        "mode": "removed",
+        "n_failed": 1.0,
+        "mean": 0.876,
+        "sd": 0.0315,
+        "median": 0.8748,
+        "min": 0.835,
+        "max": 0.9258,
+        "macro_f1": 0.8724,
+        "n": 10
+      },
+      {
+        "part": "failure",
+        "model": "lda",
+        "experiment": "E1",
+        "method": "none",
+        "mode": "zero",
+        "n_failed": 2.0,
+        "mean": 0.0794,
+        "sd": 0.0061,
+        "median": 0.0775,
+        "min": 0.0727,
+        "max": 0.091,
+        "macro_f1": 0.0231,
+        "n": 10
+      },
+      {
+        "part": "failure",
+        "model": "lda",
+        "experiment": "E1",
+        "method": "none",
+        "mode": "noise",
+        "n_failed": 2.0,
+        "mean": 0.2388,
+        "sd": 0.0467,
+        "median": 0.2438,
+        "min": 0.1621,
+        "max": 0.2979,
+        "macro_f1": 0.1811,
+        "n": 10
+      },
+      {
+        "part": "failure",
+        "model": "lda",
+        "experiment": "E1",
+        "method": "none",
+        "mode": "removed",
+        "n_failed": 2.0,
+        "mean": 0.8669,
+        "sd": 0.0319,
+        "median": 0.866,
+        "min": 0.8248,
+        "max": 0.9173,
+        "macro_f1": 0.863,
+        "n": 10
+      }
+    ]
+  },
+  "failure_by_channel": [
+    {
+      "model": "lda",
+      "experiment": "E1",
+      "method": "none",
+      "mode": "zero",
+      "failed": "W1",
+      "bal_acc": 0.0891
+    },
+    {
+      "model": "lda",
+      "experiment": "E1",
+      "method": "none",
+      "mode": "noise",
+      "failed": "W1",
+      "bal_acc": 0.3302
+    },
+    {
+      "model": "lda",
+      "experiment": "E1",
+      "method": "none",
+      "mode": "removed",
+      "failed": "W1",
+      "bal_acc": 0.8746
+    },
+    {
+      "model": "lda",
+      "experiment": "E1",
+      "method": "none",
+      "mode": "zero",
+      "failed": "W2",
+      "bal_acc": 0.0884
+    },
+    {
+      "model": "lda",
+      "experiment": "E1",
+      "method": "none",
+      "mode": "noise",
+      "failed": "W2",
+      "bal_acc": 0.3553
+    },
+    {
+      "model": "lda",
+      "experiment": "E1",
+      "method": "none",
+      "mode": "removed",
+      "failed": "W2",
+      "bal_acc": 0.8764
+    },
+    {
+      "model": "lda",
+      "experiment": "E1",
+      "method": "none",
+      "mode": "zero",
+      "failed": "W3",
+      "bal_acc": 0.0905
+    },
+    {
+      "model": "lda",
+      "experiment": "E1",
+      "method": "none",
+      "mode": "noise",
+      "failed": "W3",
+      "bal_acc": 0.3107
+    },
+    {
+      "model": "lda",
+      "experiment": "E1",
+      "method": "none",
+      "mode": "removed",
+      "failed": "W3",
+      "bal_acc": 0.8758
+    },
+    {
+      "model": "lda",
+      "experiment": "E1",
+      "method": "none",
+      "mode": "zero",
+      "failed": "W4",
+      "bal_acc": 0.0955
+    },
+    {
+      "model": "lda",
+      "experiment": "E1",
+      "method": "none",
+      "mode": "noise",
+      "failed": "W4",
+      "bal_acc": 0.3426
+    },
+    {
+      "model": "lda",
+      "experiment": "E1",
+      "method": "none",
+      "mode": "removed",
+      "failed": "W4",
+      "bal_acc": 0.8704
+    },
+    {
+      "model": "lda",
+      "experiment": "E1",
+      "method": "none",
+      "mode": "zero",
+      "failed": "W5",
+      "bal_acc": 0.1055
+    },
+    {
+      "model": "lda",
+      "experiment": "E1",
+      "method": "none",
+      "mode": "noise",
+      "failed": "W5",
+      "bal_acc": 0.4508
+    },
+    {
+      "model": "lda",
+      "experiment": "E1",
+      "method": "none",
+      "mode": "removed",
+      "failed": "W5",
+      "bal_acc": 0.8762
+    },
+    {
+      "model": "lda",
+      "experiment": "E1",
+      "method": "none",
+      "mode": "zero",
+      "failed": "W6",
+      "bal_acc": 0.1044
+    },
+    {
+      "model": "lda",
+      "experiment": "E1",
+      "method": "none",
+      "mode": "noise",
+      "failed": "W6",
+      "bal_acc": 0.3563
+    },
+    {
+      "model": "lda",
+      "experiment": "E1",
+      "method": "none",
+      "mode": "removed",
+      "failed": "W6",
+      "bal_acc": 0.8738
+    },
+    {
+      "model": "lda",
+      "experiment": "E1",
+      "method": "none",
+      "mode": "zero",
+      "failed": "W7",
+      "bal_acc": 0.0921
+    },
+    {
+      "model": "lda",
+      "experiment": "E1",
+      "method": "none",
+      "mode": "noise",
+      "failed": "W7",
+      "bal_acc": 0.3499
+    },
+    {
+      "model": "lda",
+      "experiment": "E1",
+      "method": "none",
+      "mode": "removed",
+      "failed": "W7",
+      "bal_acc": 0.8782
+    },
+    {
+      "model": "lda",
+      "experiment": "E1",
+      "method": "none",
+      "mode": "zero",
+      "failed": "W8",
+      "bal_acc": 0.0806
+    },
+    {
+      "model": "lda",
+      "experiment": "E1",
+      "method": "none",
+      "mode": "noise",
+      "failed": "W8",
+      "bal_acc": 0.2983
+    },
+    {
+      "model": "lda",
+      "experiment": "E1",
+      "method": "none",
+      "mode": "removed",
+      "failed": "W8",
+      "bal_acc": 0.8766
+    },
+    {
+      "model": "lda",
+      "experiment": "E1",
+      "method": "none",
+      "mode": "zero",
+      "failed": "W9",
+      "bal_acc": 0.0779
+    },
+    {
+      "model": "lda",
+      "experiment": "E1",
+      "method": "none",
+      "mode": "noise",
+      "failed": "W9",
+      "bal_acc": 0.1956
+    },
+    {
+      "model": "lda",
+      "experiment": "E1",
+      "method": "none",
+      "mode": "removed",
+      "failed": "W9",
+      "bal_acc": 0.8785
+    },
+    {
+      "model": "lda",
+      "experiment": "E1",
+      "method": "none",
+      "mode": "zero",
+      "failed": "W10",
+      "bal_acc": 0.0782
+    },
+    {
+      "model": "lda",
+      "experiment": "E1",
+      "method": "none",
+      "mode": "noise",
+      "failed": "W10",
+      "bal_acc": 0.3278
+    },
+    {
+      "model": "lda",
+      "experiment": "E1",
+      "method": "none",
+      "mode": "removed",
+      "failed": "W10",
+      "bal_acc": 0.8752
+    },
+    {
+      "model": "lda",
+      "experiment": "E1",
+      "method": "none",
+      "mode": "zero",
+      "failed": "W11",
+      "bal_acc": 0.0959
+    },
+    {
+      "model": "lda",
+      "experiment": "E1",
+      "method": "none",
+      "mode": "noise",
+      "failed": "W11",
+      "bal_acc": 0.3515
+    },
+    {
+      "model": "lda",
+      "experiment": "E1",
+      "method": "none",
+      "mode": "removed",
+      "failed": "W11",
+      "bal_acc": 0.875
+    },
+    {
+      "model": "lda",
+      "experiment": "E1",
+      "method": "none",
+      "mode": "zero",
+      "failed": "W12",
+      "bal_acc": 0.1053
+    },
+    {
+      "model": "lda",
+      "experiment": "E1",
+      "method": "none",
+      "mode": "noise",
+      "failed": "W12",
+      "bal_acc": 0.4902
+    },
+    {
+      "model": "lda",
+      "experiment": "E1",
+      "method": "none",
+      "mode": "removed",
+      "failed": "W12",
+      "bal_acc": 0.8819
+    }
+  ],
+  "per_participant": {
+    "channels": [
+      {
+        "part": "channels",
+        "model": "lda",
+        "experiment": "E1",
+        "setting": "wrist",
+        "n_channels": 12.0,
+        "participant": 6,
+        "bal_acc": 0.8433,
+        "macro_f1": 0.8395
+      },
+      {
+        "part": "channels",
+        "model": "lda",
+        "experiment": "E1",
+        "setting": "wrist",
+        "n_channels": 12.0,
+        "participant": 11,
+        "bal_acc": 0.8885,
+        "macro_f1": 0.8857
+      },
+      {
+        "part": "channels",
+        "model": "lda",
+        "experiment": "E1",
+        "setting": "wrist",
+        "n_channels": 12.0,
+        "participant": 21,
+        "bal_acc": 0.847,
+        "macro_f1": 0.8464
+      },
+      {
+        "part": "channels",
+        "model": "lda",
+        "experiment": "E1",
+        "setting": "wrist",
+        "n_channels": 12.0,
+        "participant": 22,
+        "bal_acc": 0.9219,
+        "macro_f1": 0.9182
+      },
+      {
+        "part": "channels",
+        "model": "lda",
+        "experiment": "E1",
+        "setting": "wrist",
+        "n_channels": 12.0,
+        "participant": 24,
+        "bal_acc": 0.8997,
+        "macro_f1": 0.8927
+      },
+      {
+        "part": "channels",
+        "model": "lda",
+        "experiment": "E1",
+        "setting": "wrist",
+        "n_channels": 12.0,
+        "participant": 27,
+        "bal_acc": 0.867,
+        "macro_f1": 0.8629
+      },
+      {
+        "part": "channels",
+        "model": "lda",
+        "experiment": "E1",
+        "setting": "wrist",
+        "n_channels": 12.0,
+        "participant": 31,
+        "bal_acc": 0.9333,
+        "macro_f1": 0.93
+      },
+      {
+        "part": "channels",
+        "model": "lda",
+        "experiment": "E1",
+        "setting": "wrist",
+        "n_channels": 12.0,
+        "participant": 35,
+        "bal_acc": 0.8732,
+        "macro_f1": 0.8706
+      },
+      {
+        "part": "channels",
+        "model": "lda",
+        "experiment": "E1",
+        "setting": "wrist",
+        "n_channels": 12.0,
+        "participant": 38,
+        "bal_acc": 0.8546,
+        "macro_f1": 0.8514
+      },
+      {
+        "part": "channels",
+        "model": "lda",
+        "experiment": "E1",
+        "setting": "wrist",
+        "n_channels": 12.0,
+        "participant": 40,
+        "bal_acc": 0.9029,
+        "macro_f1": 0.8985
+      },
+      {
+        "part": "channels",
+        "model": "lda",
+        "experiment": "E1",
+        "setting": "ring3",
+        "n_channels": 6.0,
+        "participant": 6,
+        "bal_acc": 0.7893,
+        "macro_f1": 0.7844
+      },
+      {
+        "part": "channels",
+        "model": "lda",
+        "experiment": "E1",
+        "setting": "ring3",
+        "n_channels": 6.0,
+        "participant": 11,
+        "bal_acc": 0.8244,
+        "macro_f1": 0.8195
+      },
+      {
+        "part": "channels",
+        "model": "lda",
+        "experiment": "E1",
+        "setting": "ring3",
+        "n_channels": 6.0,
+        "participant": 21,
+        "bal_acc": 0.7871,
+        "macro_f1": 0.7817
+      },
+      {
+        "part": "channels",
+        "model": "lda",
+        "experiment": "E1",
+        "setting": "ring3",
+        "n_channels": 6.0,
+        "participant": 22,
+        "bal_acc": 0.8669,
+        "macro_f1": 0.8616
+      },
+      {
+        "part": "channels",
+        "model": "lda",
+        "experiment": "E1",
+        "setting": "ring3",
+        "n_channels": 6.0,
+        "participant": 24,
+        "bal_acc": 0.8593,
+        "macro_f1": 0.8534
+      },
+      {
+        "part": "channels",
+        "model": "lda",
+        "experiment": "E1",
+        "setting": "ring3",
+        "n_channels": 6.0,
+        "participant": 27,
+        "bal_acc": 0.8151,
+        "macro_f1": 0.8105
+      },
+      {
+        "part": "channels",
+        "model": "lda",
+        "experiment": "E1",
+        "setting": "ring3",
+        "n_channels": 6.0,
+        "participant": 31,
+        "bal_acc": 0.8801,
+        "macro_f1": 0.8764
+      },
+      {
+        "part": "channels",
+        "model": "lda",
+        "experiment": "E1",
+        "setting": "ring3",
+        "n_channels": 6.0,
+        "participant": 35,
+        "bal_acc": 0.8247,
+        "macro_f1": 0.8215
+      },
+      {
+        "part": "channels",
+        "model": "lda",
+        "experiment": "E1",
+        "setting": "ring3",
+        "n_channels": 6.0,
+        "participant": 38,
+        "bal_acc": 0.789,
+        "macro_f1": 0.7831
+      },
+      {
+        "part": "channels",
+        "model": "lda",
+        "experiment": "E1",
+        "setting": "ring3",
+        "n_channels": 6.0,
+        "participant": 40,
+        "bal_acc": 0.8454,
+        "macro_f1": 0.8379
+      },
+      {
+        "part": "channels",
+        "model": "lda",
+        "experiment": "E1",
+        "setting": "ring4",
+        "n_channels": 6.0,
+        "participant": 6,
+        "bal_acc": 0.7337,
+        "macro_f1": 0.726
+      },
+      {
+        "part": "channels",
+        "model": "lda",
+        "experiment": "E1",
+        "setting": "ring4",
+        "n_channels": 6.0,
+        "participant": 11,
+        "bal_acc": 0.7677,
+        "macro_f1": 0.7615
+      },
+      {
+        "part": "channels",
+        "model": "lda",
+        "experiment": "E1",
+        "setting": "ring4",
+        "n_channels": 6.0,
+        "participant": 21,
+        "bal_acc": 0.7769,
+        "macro_f1": 0.7681
+      },
+      {
+        "part": "channels",
+        "model": "lda",
+        "experiment": "E1",
+        "setting": "ring4",
+        "n_channels": 6.0,
+        "participant": 22,
+        "bal_acc": 0.8264,
+        "macro_f1": 0.8223
+      },
+      {
+        "part": "channels",
+        "model": "lda",
+        "experiment": "E1",
+        "setting": "ring4",
+        "n_channels": 6.0,
+        "participant": 24,
+        "bal_acc": 0.8357,
+        "macro_f1": 0.8255
+      },
+      {
+        "part": "channels",
+        "model": "lda",
+        "experiment": "E1",
+        "setting": "ring4",
+        "n_channels": 6.0,
+        "participant": 27,
+        "bal_acc": 0.7825,
+        "macro_f1": 0.78
+      },
+      {
+        "part": "channels",
+        "model": "lda",
+        "experiment": "E1",
+        "setting": "ring4",
+        "n_channels": 6.0,
+        "participant": 31,
+        "bal_acc": 0.8536,
+        "macro_f1": 0.8483
+      },
+      {
+        "part": "channels",
+        "model": "lda",
+        "experiment": "E1",
+        "setting": "ring4",
+        "n_channels": 6.0,
+        "participant": 35,
+        "bal_acc": 0.797,
+        "macro_f1": 0.792
+      },
+      {
+        "part": "channels",
+        "model": "lda",
+        "experiment": "E1",
+        "setting": "ring4",
+        "n_channels": 6.0,
+        "participant": 38,
+        "bal_acc": 0.8012,
+        "macro_f1": 0.7963
+      },
+      {
+        "part": "channels",
+        "model": "lda",
+        "experiment": "E1",
+        "setting": "ring4",
+        "n_channels": 6.0,
+        "participant": 40,
+        "bal_acc": 0.7823,
+        "macro_f1": 0.7726
+      },
+      {
+        "part": "channels",
+        "model": "lda",
+        "experiment": "E1",
+        "setting": "forearm",
+        "n_channels": 16.0,
+        "participant": 6,
+        "bal_acc": 0.7725,
+        "macro_f1": 0.7675
+      },
+      {
+        "part": "channels",
+        "model": "lda",
+        "experiment": "E1",
+        "setting": "forearm",
+        "n_channels": 16.0,
+        "participant": 11,
+        "bal_acc": 0.7876,
+        "macro_f1": 0.7794
+      },
+      {
+        "part": "channels",
+        "model": "lda",
+        "experiment": "E1",
+        "setting": "forearm",
+        "n_channels": 16.0,
+        "participant": 21,
+        "bal_acc": 0.8793,
+        "macro_f1": 0.875
+      },
+      {
+        "part": "channels",
+        "model": "lda",
+        "experiment": "E1",
+        "setting": "forearm",
+        "n_channels": 16.0,
+        "participant": 22,
+        "bal_acc": 0.8523,
+        "macro_f1": 0.8441
+      },
+      {
+        "part": "channels",
+        "model": "lda",
+        "experiment": "E1",
+        "setting": "forearm",
+        "n_channels": 16.0,
+        "participant": 24,
+        "bal_acc": 0.9514,
+        "macro_f1": 0.9504
+      },
+      {
+        "part": "channels",
+        "model": "lda",
+        "experiment": "E1",
+        "setting": "forearm",
+        "n_channels": 16.0,
+        "participant": 27,
+        "bal_acc": 0.8583,
+        "macro_f1": 0.8535
+      },
+      {
+        "part": "channels",
+        "model": "lda",
+        "experiment": "E1",
+        "setting": "forearm",
+        "n_channels": 16.0,
+        "participant": 31,
+        "bal_acc": 0.8736,
+        "macro_f1": 0.8708
+      },
+      {
+        "part": "channels",
+        "model": "lda",
+        "experiment": "E1",
+        "setting": "forearm",
+        "n_channels": 16.0,
+        "participant": 35,
+        "bal_acc": 0.9058,
+        "macro_f1": 0.9039
+      },
+      {
+        "part": "channels",
+        "model": "lda",
+        "experiment": "E1",
+        "setting": "forearm",
+        "n_channels": 16.0,
+        "participant": 38,
+        "bal_acc": 0.8459,
+        "macro_f1": 0.8464
+      },
+      {
+        "part": "channels",
+        "model": "lda",
+        "experiment": "E1",
+        "setting": "forearm",
+        "n_channels": 16.0,
+        "participant": 40,
+        "bal_acc": 0.8522,
+        "macro_f1": 0.8494
+      },
+      {
+        "part": "channels",
+        "model": "lda",
+        "experiment": "E1",
+        "setting": "forearm_wrist",
+        "n_channels": 28.0,
+        "participant": 6,
+        "bal_acc": 0.9209,
+        "macro_f1": 0.9204
+      },
+      {
+        "part": "channels",
+        "model": "lda",
+        "experiment": "E1",
+        "setting": "forearm_wrist",
+        "n_channels": 28.0,
+        "participant": 11,
+        "bal_acc": 0.9584,
+        "macro_f1": 0.9562
+      },
+      {
+        "part": "channels",
+        "model": "lda",
+        "experiment": "E1",
+        "setting": "forearm_wrist",
+        "n_channels": 28.0,
+        "participant": 21,
+        "bal_acc": 0.9413,
+        "macro_f1": 0.9405
+      },
+      {
+        "part": "channels",
+        "model": "lda",
+        "experiment": "E1",
+        "setting": "forearm_wrist",
+        "n_channels": 28.0,
+        "participant": 22,
+        "bal_acc": 0.957,
+        "macro_f1": 0.9567
+      },
+      {
+        "part": "channels",
+        "model": "lda",
+        "experiment": "E1",
+        "setting": "forearm_wrist",
+        "n_channels": 28.0,
+        "participant": 24,
+        "bal_acc": 0.991,
+        "macro_f1": 0.991
+      },
+      {
+        "part": "channels",
+        "model": "lda",
+        "experiment": "E1",
+        "setting": "forearm_wrist",
+        "n_channels": 28.0,
+        "participant": 27,
+        "bal_acc": 0.9653,
+        "macro_f1": 0.9652
+      },
+      {
+        "part": "channels",
+        "model": "lda",
+        "experiment": "E1",
+        "setting": "forearm_wrist",
+        "n_channels": 28.0,
+        "participant": 31,
+        "bal_acc": 0.9825,
+        "macro_f1": 0.9822
+      },
+      {
+        "part": "channels",
+        "model": "lda",
+        "experiment": "E1",
+        "setting": "forearm_wrist",
+        "n_channels": 28.0,
+        "participant": 35,
+        "bal_acc": 0.953,
+        "macro_f1": 0.9513
+      },
+      {
+        "part": "channels",
+        "model": "lda",
+        "experiment": "E1",
+        "setting": "forearm_wrist",
+        "n_channels": 28.0,
+        "participant": 38,
+        "bal_acc": 0.8983,
+        "macro_f1": 0.8979
+      },
+      {
+        "part": "channels",
+        "model": "lda",
+        "experiment": "E1",
+        "setting": "forearm_wrist",
+        "n_channels": 28.0,
+        "participant": 40,
+        "bal_acc": 0.9379,
+        "macro_f1": 0.9357
+      }
+    ],
+    "greedy": [
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 12.0,
+        "participant": 6,
+        "bal_acc": 0.8433,
+        "macro_f1": 0.8395
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 12.0,
+        "participant": 11,
+        "bal_acc": 0.8885,
+        "macro_f1": 0.8857
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 12.0,
+        "participant": 21,
+        "bal_acc": 0.847,
+        "macro_f1": 0.8464
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 12.0,
+        "participant": 22,
+        "bal_acc": 0.9219,
+        "macro_f1": 0.9182
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 12.0,
+        "participant": 24,
+        "bal_acc": 0.8997,
+        "macro_f1": 0.8927
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 12.0,
+        "participant": 27,
+        "bal_acc": 0.867,
+        "macro_f1": 0.8629
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 12.0,
+        "participant": 31,
+        "bal_acc": 0.9333,
+        "macro_f1": 0.93
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 12.0,
+        "participant": 35,
+        "bal_acc": 0.8732,
+        "macro_f1": 0.8706
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 12.0,
+        "participant": 38,
+        "bal_acc": 0.8546,
+        "macro_f1": 0.8514
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 12.0,
+        "participant": 40,
+        "bal_acc": 0.9029,
+        "macro_f1": 0.8985
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 11.0,
+        "participant": 6,
+        "bal_acc": 0.8405,
+        "macro_f1": 0.8369
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 11.0,
+        "participant": 11,
+        "bal_acc": 0.8856,
+        "macro_f1": 0.8829
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 11.0,
+        "participant": 21,
+        "bal_acc": 0.841,
+        "macro_f1": 0.8395
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 11.0,
+        "participant": 22,
+        "bal_acc": 0.9203,
+        "macro_f1": 0.9178
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 11.0,
+        "participant": 24,
+        "bal_acc": 0.9015,
+        "macro_f1": 0.8952
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 11.0,
+        "participant": 27,
+        "bal_acc": 0.8776,
+        "macro_f1": 0.8755
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 11.0,
+        "participant": 31,
+        "bal_acc": 0.9271,
+        "macro_f1": 0.9242
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 11.0,
+        "participant": 35,
+        "bal_acc": 0.8732,
+        "macro_f1": 0.8704
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 11.0,
+        "participant": 38,
+        "bal_acc": 0.854,
+        "macro_f1": 0.8498
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 11.0,
+        "participant": 40,
+        "bal_acc": 0.8978,
+        "macro_f1": 0.8941
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 10.0,
+        "participant": 6,
+        "bal_acc": 0.8292,
+        "macro_f1": 0.8254
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 10.0,
+        "participant": 11,
+        "bal_acc": 0.8818,
+        "macro_f1": 0.8778
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 10.0,
+        "participant": 21,
+        "bal_acc": 0.8358,
+        "macro_f1": 0.8333
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 10.0,
+        "participant": 22,
+        "bal_acc": 0.9179,
+        "macro_f1": 0.9153
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 10.0,
+        "participant": 24,
+        "bal_acc": 0.8974,
+        "macro_f1": 0.8912
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 10.0,
+        "participant": 27,
+        "bal_acc": 0.8688,
+        "macro_f1": 0.8671
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 10.0,
+        "participant": 31,
+        "bal_acc": 0.9169,
+        "macro_f1": 0.9139
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 10.0,
+        "participant": 35,
+        "bal_acc": 0.8649,
+        "macro_f1": 0.8617
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 10.0,
+        "participant": 38,
+        "bal_acc": 0.8444,
+        "macro_f1": 0.8405
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 10.0,
+        "participant": 40,
+        "bal_acc": 0.8949,
+        "macro_f1": 0.8907
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 9.0,
+        "participant": 6,
+        "bal_acc": 0.8266,
+        "macro_f1": 0.8228
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 9.0,
+        "participant": 11,
+        "bal_acc": 0.8783,
+        "macro_f1": 0.8738
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 9.0,
+        "participant": 21,
+        "bal_acc": 0.8371,
+        "macro_f1": 0.8349
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 9.0,
+        "participant": 22,
+        "bal_acc": 0.9044,
+        "macro_f1": 0.9009
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 9.0,
+        "participant": 24,
+        "bal_acc": 0.8942,
+        "macro_f1": 0.8875
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 9.0,
+        "participant": 27,
+        "bal_acc": 0.8643,
+        "macro_f1": 0.8633
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 9.0,
+        "participant": 31,
+        "bal_acc": 0.8993,
+        "macro_f1": 0.8953
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 9.0,
+        "participant": 35,
+        "bal_acc": 0.8709,
+        "macro_f1": 0.8689
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 9.0,
+        "participant": 38,
+        "bal_acc": 0.833,
+        "macro_f1": 0.8272
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 9.0,
+        "participant": 40,
+        "bal_acc": 0.8851,
+        "macro_f1": 0.8788
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 8.0,
+        "participant": 6,
+        "bal_acc": 0.825,
+        "macro_f1": 0.8217
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 8.0,
+        "participant": 11,
+        "bal_acc": 0.8654,
+        "macro_f1": 0.8604
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 8.0,
+        "participant": 21,
+        "bal_acc": 0.8127,
+        "macro_f1": 0.8093
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 8.0,
+        "participant": 22,
+        "bal_acc": 0.8899,
+        "macro_f1": 0.8867
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 8.0,
+        "participant": 24,
+        "bal_acc": 0.8832,
+        "macro_f1": 0.8757
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 8.0,
+        "participant": 27,
+        "bal_acc": 0.8558,
+        "macro_f1": 0.854
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 8.0,
+        "participant": 31,
+        "bal_acc": 0.9012,
+        "macro_f1": 0.8975
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 8.0,
+        "participant": 35,
+        "bal_acc": 0.8632,
+        "macro_f1": 0.8613
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 8.0,
+        "participant": 38,
+        "bal_acc": 0.8262,
+        "macro_f1": 0.8204
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 8.0,
+        "participant": 40,
+        "bal_acc": 0.8693,
+        "macro_f1": 0.8624
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 7.0,
+        "participant": 6,
+        "bal_acc": 0.7881,
+        "macro_f1": 0.7823
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 7.0,
+        "participant": 11,
+        "bal_acc": 0.8456,
+        "macro_f1": 0.8392
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 7.0,
+        "participant": 21,
+        "bal_acc": 0.8071,
+        "macro_f1": 0.8033
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 7.0,
+        "participant": 22,
+        "bal_acc": 0.8838,
+        "macro_f1": 0.8809
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 7.0,
+        "participant": 24,
+        "bal_acc": 0.8572,
+        "macro_f1": 0.8491
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 7.0,
+        "participant": 27,
+        "bal_acc": 0.8362,
+        "macro_f1": 0.8366
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 7.0,
+        "participant": 31,
+        "bal_acc": 0.8908,
+        "macro_f1": 0.8862
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 7.0,
+        "participant": 35,
+        "bal_acc": 0.8668,
+        "macro_f1": 0.8649
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 7.0,
+        "participant": 38,
+        "bal_acc": 0.8209,
+        "macro_f1": 0.8151
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 7.0,
+        "participant": 40,
+        "bal_acc": 0.862,
+        "macro_f1": 0.8546
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 6.0,
+        "participant": 6,
+        "bal_acc": 0.7757,
+        "macro_f1": 0.7698
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 6.0,
+        "participant": 11,
+        "bal_acc": 0.8051,
+        "macro_f1": 0.7992
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 6.0,
+        "participant": 21,
+        "bal_acc": 0.7855,
+        "macro_f1": 0.7816
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 6.0,
+        "participant": 22,
+        "bal_acc": 0.8672,
+        "macro_f1": 0.8632
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 6.0,
+        "participant": 24,
+        "bal_acc": 0.8555,
+        "macro_f1": 0.8486
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 6.0,
+        "participant": 27,
+        "bal_acc": 0.8269,
+        "macro_f1": 0.8257
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 6.0,
+        "participant": 31,
+        "bal_acc": 0.8772,
+        "macro_f1": 0.8726
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 6.0,
+        "participant": 35,
+        "bal_acc": 0.8415,
+        "macro_f1": 0.8386
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 6.0,
+        "participant": 38,
+        "bal_acc": 0.8028,
+        "macro_f1": 0.7992
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 6.0,
+        "participant": 40,
+        "bal_acc": 0.8429,
+        "macro_f1": 0.836
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 5.0,
+        "participant": 6,
+        "bal_acc": 0.7353,
+        "macro_f1": 0.7273
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 5.0,
+        "participant": 11,
+        "bal_acc": 0.7896,
+        "macro_f1": 0.783
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 5.0,
+        "participant": 21,
+        "bal_acc": 0.766,
+        "macro_f1": 0.757
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 5.0,
+        "participant": 22,
+        "bal_acc": 0.829,
+        "macro_f1": 0.8247
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 5.0,
+        "participant": 24,
+        "bal_acc": 0.8213,
+        "macro_f1": 0.8148
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 5.0,
+        "participant": 27,
+        "bal_acc": 0.768,
+        "macro_f1": 0.7685
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 5.0,
+        "participant": 31,
+        "bal_acc": 0.8619,
+        "macro_f1": 0.8576
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 5.0,
+        "participant": 35,
+        "bal_acc": 0.824,
+        "macro_f1": 0.8219
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 5.0,
+        "participant": 38,
+        "bal_acc": 0.7763,
+        "macro_f1": 0.7706
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 5.0,
+        "participant": 40,
+        "bal_acc": 0.8251,
+        "macro_f1": 0.8181
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 4.0,
+        "participant": 6,
+        "bal_acc": 0.6862,
+        "macro_f1": 0.6758
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 4.0,
+        "participant": 11,
+        "bal_acc": 0.7582,
+        "macro_f1": 0.7512
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 4.0,
+        "participant": 21,
+        "bal_acc": 0.7041,
+        "macro_f1": 0.6923
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 4.0,
+        "participant": 22,
+        "bal_acc": 0.7795,
+        "macro_f1": 0.7719
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 4.0,
+        "participant": 24,
+        "bal_acc": 0.7672,
+        "macro_f1": 0.7609
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 4.0,
+        "participant": 27,
+        "bal_acc": 0.7259,
+        "macro_f1": 0.7247
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 4.0,
+        "participant": 31,
+        "bal_acc": 0.8261,
+        "macro_f1": 0.8222
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 4.0,
+        "participant": 35,
+        "bal_acc": 0.7763,
+        "macro_f1": 0.7742
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 4.0,
+        "participant": 38,
+        "bal_acc": 0.7648,
+        "macro_f1": 0.7597
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 4.0,
+        "participant": 40,
+        "bal_acc": 0.7951,
+        "macro_f1": 0.7857
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 3.0,
+        "participant": 6,
+        "bal_acc": 0.6073,
+        "macro_f1": 0.5946
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 3.0,
+        "participant": 11,
+        "bal_acc": 0.6834,
+        "macro_f1": 0.6727
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 3.0,
+        "participant": 21,
+        "bal_acc": 0.6553,
+        "macro_f1": 0.6438
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 3.0,
+        "participant": 22,
+        "bal_acc": 0.7536,
+        "macro_f1": 0.7474
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 3.0,
+        "participant": 24,
+        "bal_acc": 0.7328,
+        "macro_f1": 0.7258
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 3.0,
+        "participant": 27,
+        "bal_acc": 0.6253,
+        "macro_f1": 0.6203
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 3.0,
+        "participant": 31,
+        "bal_acc": 0.7329,
+        "macro_f1": 0.7289
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 3.0,
+        "participant": 35,
+        "bal_acc": 0.6917,
+        "macro_f1": 0.6787
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 3.0,
+        "participant": 38,
+        "bal_acc": 0.7152,
+        "macro_f1": 0.7061
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 3.0,
+        "participant": 40,
+        "bal_acc": 0.7156,
+        "macro_f1": 0.7064
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 2.0,
+        "participant": 6,
+        "bal_acc": 0.5048,
+        "macro_f1": 0.4871
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 2.0,
+        "participant": 11,
+        "bal_acc": 0.5342,
+        "macro_f1": 0.5229
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 2.0,
+        "participant": 21,
+        "bal_acc": 0.5697,
+        "macro_f1": 0.558
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 2.0,
+        "participant": 22,
+        "bal_acc": 0.6415,
+        "macro_f1": 0.6327
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 2.0,
+        "participant": 24,
+        "bal_acc": 0.6148,
+        "macro_f1": 0.6017
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 2.0,
+        "participant": 27,
+        "bal_acc": 0.5385,
+        "macro_f1": 0.527
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 2.0,
+        "participant": 31,
+        "bal_acc": 0.6298,
+        "macro_f1": 0.624
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 2.0,
+        "participant": 35,
+        "bal_acc": 0.6109,
+        "macro_f1": 0.5985
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 2.0,
+        "participant": 38,
+        "bal_acc": 0.6114,
+        "macro_f1": 0.6009
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 2.0,
+        "participant": 40,
+        "bal_acc": 0.6102,
+        "macro_f1": 0.5985
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 1.0,
+        "participant": 6,
+        "bal_acc": 0.3254,
+        "macro_f1": 0.3058
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 1.0,
+        "participant": 11,
+        "bal_acc": 0.3626,
+        "macro_f1": 0.3532
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 1.0,
+        "participant": 21,
+        "bal_acc": 0.4268,
+        "macro_f1": 0.4122
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 1.0,
+        "participant": 22,
+        "bal_acc": 0.3886,
+        "macro_f1": 0.3821
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 1.0,
+        "participant": 24,
+        "bal_acc": 0.4253,
+        "macro_f1": 0.406
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 1.0,
+        "participant": 27,
+        "bal_acc": 0.3614,
+        "macro_f1": 0.3519
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 1.0,
+        "participant": 31,
+        "bal_acc": 0.3992,
+        "macro_f1": 0.3817
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 1.0,
+        "participant": 35,
+        "bal_acc": 0.3584,
+        "macro_f1": 0.345
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 1.0,
+        "participant": 38,
+        "bal_acc": 0.3641,
+        "macro_f1": 0.3474
+      },
+      {
+        "part": "greedy",
+        "model": "lda",
+        "experiment": "E1",
+        "n_channels": 1.0,
+        "participant": 40,
+        "bal_acc": 0.3556,
+        "macro_f1": 0.3404
+      }
+    ],
+    "rate": [
+      {
+        "part": "rate",
+        "model": "lda",
+        "experiment": "E1",
+        "fs_hz": 2048.0,
+        "band_hi_hz": 450.0,
+        "participant": 6,
+        "bal_acc": 0.8433,
+        "macro_f1": 0.8395
+      },
+      {
+        "part": "rate",
+        "model": "lda",
+        "experiment": "E1",
+        "fs_hz": 2048.0,
+        "band_hi_hz": 450.0,
+        "participant": 11,
+        "bal_acc": 0.8885,
+        "macro_f1": 0.8857
+      },
+      {
+        "part": "rate",
+        "model": "lda",
+        "experiment": "E1",
+        "fs_hz": 2048.0,
+        "band_hi_hz": 450.0,
+        "participant": 21,
+        "bal_acc": 0.847,
+        "macro_f1": 0.8464
+      },
+      {
+        "part": "rate",
+        "model": "lda",
+        "experiment": "E1",
+        "fs_hz": 2048.0,
+        "band_hi_hz": 450.0,
+        "participant": 22,
+        "bal_acc": 0.9219,
+        "macro_f1": 0.9182
+      },
+      {
+        "part": "rate",
+        "model": "lda",
+        "experiment": "E1",
+        "fs_hz": 2048.0,
+        "band_hi_hz": 450.0,
+        "participant": 24,
+        "bal_acc": 0.8997,
+        "macro_f1": 0.8927
+      },
+      {
+        "part": "rate",
+        "model": "lda",
+        "experiment": "E1",
+        "fs_hz": 2048.0,
+        "band_hi_hz": 450.0,
+        "participant": 27,
+        "bal_acc": 0.867,
+        "macro_f1": 0.8629
+      },
+      {
+        "part": "rate",
+        "model": "lda",
+        "experiment": "E1",
+        "fs_hz": 2048.0,
+        "band_hi_hz": 450.0,
+        "participant": 31,
+        "bal_acc": 0.9333,
+        "macro_f1": 0.93
+      },
+      {
+        "part": "rate",
+        "model": "lda",
+        "experiment": "E1",
+        "fs_hz": 2048.0,
+        "band_hi_hz": 450.0,
+        "participant": 35,
+        "bal_acc": 0.8732,
+        "macro_f1": 0.8706
+      },
+      {
+        "part": "rate",
+        "model": "lda",
+        "experiment": "E1",
+        "fs_hz": 2048.0,
+        "band_hi_hz": 450.0,
+        "participant": 38,
+        "bal_acc": 0.8546,
+        "macro_f1": 0.8514
+      },
+      {
+        "part": "rate",
+        "model": "lda",
+        "experiment": "E1",
+        "fs_hz": 2048.0,
+        "band_hi_hz": 450.0,
+        "participant": 40,
+        "bal_acc": 0.9029,
+        "macro_f1": 0.8985
+      },
+      {
+        "part": "rate",
+        "model": "lda",
+        "experiment": "E1",
+        "fs_hz": 1024.0,
+        "band_hi_hz": 409.6,
+        "participant": 6,
+        "bal_acc": 0.8406,
+        "macro_f1": 0.8374
+      },
+      {
+        "part": "rate",
+        "model": "lda",
+        "experiment": "E1",
+        "fs_hz": 1024.0,
+        "band_hi_hz": 409.6,
+        "participant": 11,
+        "bal_acc": 0.887,
+        "macro_f1": 0.8849
+      },
+      {
+        "part": "rate",
+        "model": "lda",
+        "experiment": "E1",
+        "fs_hz": 1024.0,
+        "band_hi_hz": 409.6,
+        "participant": 21,
+        "bal_acc": 0.8403,
+        "macro_f1": 0.8397
+      },
+      {
+        "part": "rate",
+        "model": "lda",
+        "experiment": "E1",
+        "fs_hz": 1024.0,
+        "band_hi_hz": 409.6,
+        "participant": 22,
+        "bal_acc": 0.9078,
+        "macro_f1": 0.9041
+      },
+      {
+        "part": "rate",
+        "model": "lda",
+        "experiment": "E1",
+        "fs_hz": 1024.0,
+        "band_hi_hz": 409.6,
+        "participant": 24,
+        "bal_acc": 0.8896,
+        "macro_f1": 0.8823
+      },
+      {
+        "part": "rate",
+        "model": "lda",
+        "experiment": "E1",
+        "fs_hz": 1024.0,
+        "band_hi_hz": 409.6,
+        "participant": 27,
+        "bal_acc": 0.883,
+        "macro_f1": 0.8812
+      },
+      {
+        "part": "rate",
+        "model": "lda",
+        "experiment": "E1",
+        "fs_hz": 1024.0,
+        "band_hi_hz": 409.6,
+        "participant": 31,
+        "bal_acc": 0.9383,
+        "macro_f1": 0.9353
+      },
+      {
+        "part": "rate",
+        "model": "lda",
+        "experiment": "E1",
+        "fs_hz": 1024.0,
+        "band_hi_hz": 409.6,
+        "participant": 35,
+        "bal_acc": 0.8649,
+        "macro_f1": 0.8618
+      },
+      {
+        "part": "rate",
+        "model": "lda",
+        "experiment": "E1",
+        "fs_hz": 1024.0,
+        "band_hi_hz": 409.6,
+        "participant": 38,
+        "bal_acc": 0.8517,
+        "macro_f1": 0.8476
+      },
+      {
+        "part": "rate",
+        "model": "lda",
+        "experiment": "E1",
+        "fs_hz": 1024.0,
+        "band_hi_hz": 409.6,
+        "participant": 40,
+        "bal_acc": 0.8935,
+        "macro_f1": 0.8892
+      },
+      {
+        "part": "rate",
+        "model": "lda",
+        "experiment": "E1",
+        "fs_hz": 512.0,
+        "band_hi_hz": 204.8,
+        "participant": 6,
+        "bal_acc": 0.8257,
+        "macro_f1": 0.823
+      },
+      {
+        "part": "rate",
+        "model": "lda",
+        "experiment": "E1",
+        "fs_hz": 512.0,
+        "band_hi_hz": 204.8,
+        "participant": 11,
+        "bal_acc": 0.8385,
+        "macro_f1": 0.8387
+      },
+      {
+        "part": "rate",
+        "model": "lda",
+        "experiment": "E1",
+        "fs_hz": 512.0,
+        "band_hi_hz": 204.8,
+        "participant": 21,
+        "bal_acc": 0.7826,
+        "macro_f1": 0.7775
+      },
+      {
+        "part": "rate",
+        "model": "lda",
+        "experiment": "E1",
+        "fs_hz": 512.0,
+        "band_hi_hz": 204.8,
+        "participant": 22,
+        "bal_acc": 0.8298,
+        "macro_f1": 0.8242
+      },
+      {
+        "part": "rate",
+        "model": "lda",
+        "experiment": "E1",
+        "fs_hz": 512.0,
+        "band_hi_hz": 204.8,
+        "participant": 24,
+        "bal_acc": 0.8415,
+        "macro_f1": 0.8332
+      },
+      {
+        "part": "rate",
+        "model": "lda",
+        "experiment": "E1",
+        "fs_hz": 512.0,
+        "band_hi_hz": 204.8,
+        "participant": 27,
+        "bal_acc": 0.8281,
+        "macro_f1": 0.8254
+      },
+      {
+        "part": "rate",
+        "model": "lda",
+        "experiment": "E1",
+        "fs_hz": 512.0,
+        "band_hi_hz": 204.8,
+        "participant": 31,
+        "bal_acc": 0.9161,
+        "macro_f1": 0.9121
+      },
+      {
+        "part": "rate",
+        "model": "lda",
+        "experiment": "E1",
+        "fs_hz": 512.0,
+        "band_hi_hz": 204.8,
+        "participant": 35,
+        "bal_acc": 0.833,
+        "macro_f1": 0.83
+      },
+      {
+        "part": "rate",
+        "model": "lda",
+        "experiment": "E1",
+        "fs_hz": 512.0,
+        "band_hi_hz": 204.8,
+        "participant": 38,
+        "bal_acc": 0.8212,
+        "macro_f1": 0.8142
+      },
+      {
+        "part": "rate",
+        "model": "lda",
+        "experiment": "E1",
+        "fs_hz": 512.0,
+        "band_hi_hz": 204.8,
+        "participant": 40,
+        "bal_acc": 0.8477,
+        "macro_f1": 0.8438
+      },
+      {
+        "part": "rate",
+        "model": "lda",
+        "experiment": "E1",
+        "fs_hz": 256.0,
+        "band_hi_hz": 102.4,
+        "participant": 6,
+        "bal_acc": 0.7388,
+        "macro_f1": 0.7338
+      },
+      {
+        "part": "rate",
+        "model": "lda",
+        "experiment": "E1",
+        "fs_hz": 256.0,
+        "band_hi_hz": 102.4,
+        "participant": 11,
+        "bal_acc": 0.7342,
+        "macro_f1": 0.7382
+      },
+      {
+        "part": "rate",
+        "model": "lda",
+        "experiment": "E1",
+        "fs_hz": 256.0,
+        "band_hi_hz": 102.4,
+        "participant": 21,
+        "bal_acc": 0.7011,
+        "macro_f1": 0.6904
+      },
+      {
+        "part": "rate",
+        "model": "lda",
+        "experiment": "E1",
+        "fs_hz": 256.0,
+        "band_hi_hz": 102.4,
+        "participant": 22,
+        "bal_acc": 0.6979,
+        "macro_f1": 0.6875
+      },
+      {
+        "part": "rate",
+        "model": "lda",
+        "experiment": "E1",
+        "fs_hz": 256.0,
+        "band_hi_hz": 102.4,
+        "participant": 24,
+        "bal_acc": 0.7266,
+        "macro_f1": 0.7173
+      },
+      {
+        "part": "rate",
+        "model": "lda",
+        "experiment": "E1",
+        "fs_hz": 256.0,
+        "band_hi_hz": 102.4,
+        "participant": 27,
+        "bal_acc": 0.689,
+        "macro_f1": 0.6838
+      },
+      {
+        "part": "rate",
+        "model": "lda",
+        "experiment": "E1",
+        "fs_hz": 256.0,
+        "band_hi_hz": 102.4,
+        "participant": 31,
+        "bal_acc": 0.8515,
+        "macro_f1": 0.8447
+      },
+      {
+        "part": "rate",
+        "model": "lda",
+        "experiment": "E1",
+        "fs_hz": 256.0,
+        "band_hi_hz": 102.4,
+        "participant": 35,
+        "bal_acc": 0.7136,
+        "macro_f1": 0.7162
+      },
+      {
+        "part": "rate",
+        "model": "lda",
+        "experiment": "E1",
+        "fs_hz": 256.0,
+        "band_hi_hz": 102.4,
+        "participant": 38,
+        "bal_acc": 0.7805,
+        "macro_f1": 0.7731
+      },
+      {
+        "part": "rate",
+        "model": "lda",
+        "experiment": "E1",
+        "fs_hz": 256.0,
+        "band_hi_hz": 102.4,
+        "participant": 40,
+        "bal_acc": 0.7453,
+        "macro_f1": 0.7417
+      }
+    ],
+    "rotation": [
+      {
+        "part": "rotation",
+        "model": "lda",
+        "experiment": "E2",
+        "base": "plain",
+        "method": "none",
+        "shift": -1.0,
+        "participant": 6,
+        "bal_acc": 0.1489,
+        "macro_f1": 0.0912
+      },
+      {
+        "part": "rotation",
+        "model": "lda",
+        "experiment": "E2",
+        "base": "plain",
+        "method": "none",
+        "shift": 0.0,
+        "participant": 6,
+        "bal_acc": 0.545,
+        "macro_f1": 0.5281
+      },
+      {
+        "part": "rotation",
+        "model": "lda",
+        "experiment": "E2",
+        "base": "plain",
+        "method": "none",
+        "shift": 1.0,
+        "participant": 6,
+        "bal_acc": 0.1226,
+        "macro_f1": 0.0865
+      },
+      {
+        "part": "rotation",
+        "model": "lda",
+        "experiment": "E2",
+        "base": "rot_aug",
+        "method": "none",
+        "shift": -1.0,
+        "participant": 6,
+        "bal_acc": 0.3613,
+        "macro_f1": 0.3289
+      },
+      {
+        "part": "rotation",
+        "model": "lda",
+        "experiment": "E2",
+        "base": "rot_aug",
+        "method": "none",
+        "shift": 0.0,
+        "participant": 6,
+        "bal_acc": 0.4131,
+        "macro_f1": 0.3861
+      },
+      {
+        "part": "rotation",
+        "model": "lda",
+        "experiment": "E2",
+        "base": "rot_aug",
+        "method": "none",
+        "shift": 1.0,
+        "participant": 6,
+        "bal_acc": 0.3583,
+        "macro_f1": 0.3153
+      },
+      {
+        "part": "rotation",
+        "model": "lda",
+        "experiment": "E2",
+        "base": "plain",
+        "method": "none",
+        "shift": -1.0,
+        "participant": 11,
+        "bal_acc": 0.1769,
+        "macro_f1": 0.1366
+      },
+      {
+        "part": "rotation",
+        "model": "lda",
+        "experiment": "E2",
+        "base": "plain",
+        "method": "none",
+        "shift": 0.0,
+        "participant": 11,
+        "bal_acc": 0.4758,
+        "macro_f1": 0.4677
+      },
+      {
+        "part": "rotation",
+        "model": "lda",
+        "experiment": "E2",
+        "base": "plain",
+        "method": "none",
+        "shift": 1.0,
+        "participant": 11,
+        "bal_acc": 0.0666,
+        "macro_f1": 0.0645
+      },
+      {
+        "part": "rotation",
+        "model": "lda",
+        "experiment": "E2",
+        "base": "rot_aug",
+        "method": "none",
+        "shift": -1.0,
+        "participant": 11,
+        "bal_acc": 0.4832,
+        "macro_f1": 0.4687
+      },
+      {
+        "part": "rotation",
+        "model": "lda",
+        "experiment": "E2",
+        "base": "rot_aug",
+        "method": "none",
+        "shift": 0.0,
+        "participant": 11,
+        "bal_acc": 0.4856,
+        "macro_f1": 0.4628
+      },
+      {
+        "part": "rotation",
+        "model": "lda",
+        "experiment": "E2",
+        "base": "rot_aug",
+        "method": "none",
+        "shift": 1.0,
+        "participant": 11,
+        "bal_acc": 0.3158,
+        "macro_f1": 0.2718
+      },
+      {
+        "part": "rotation",
+        "model": "lda",
+        "experiment": "E2",
+        "base": "plain",
+        "method": "none",
+        "shift": -1.0,
+        "participant": 21,
+        "bal_acc": 0.1581,
+        "macro_f1": 0.1271
+      },
+      {
+        "part": "rotation",
+        "model": "lda",
+        "experiment": "E2",
+        "base": "plain",
+        "method": "none",
+        "shift": 0.0,
+        "participant": 21,
+        "bal_acc": 0.6675,
+        "macro_f1": 0.6524
+      },
+      {
+        "part": "rotation",
+        "model": "lda",
+        "experiment": "E2",
+        "base": "plain",
+        "method": "none",
+        "shift": 1.0,
+        "participant": 21,
+        "bal_acc": 0.1332,
+        "macro_f1": 0.0981
+      },
+      {
+        "part": "rotation",
+        "model": "lda",
+        "experiment": "E2",
+        "base": "rot_aug",
+        "method": "none",
+        "shift": -1.0,
+        "participant": 21,
+        "bal_acc": 0.5471,
+        "macro_f1": 0.5332
+      },
+      {
+        "part": "rotation",
+        "model": "lda",
+        "experiment": "E2",
+        "base": "rot_aug",
+        "method": "none",
+        "shift": 0.0,
+        "participant": 21,
+        "bal_acc": 0.5473,
+        "macro_f1": 0.5404
+      },
+      {
+        "part": "rotation",
+        "model": "lda",
+        "experiment": "E2",
+        "base": "rot_aug",
+        "method": "none",
+        "shift": 1.0,
+        "participant": 21,
+        "bal_acc": 0.5153,
+        "macro_f1": 0.5028
+      },
+      {
+        "part": "rotation",
+        "model": "lda",
+        "experiment": "E2",
+        "base": "plain",
+        "method": "none",
+        "shift": -1.0,
+        "participant": 22,
+        "bal_acc": 0.2153,
+        "macro_f1": 0.1979
+      },
+      {
+        "part": "rotation",
+        "model": "lda",
+        "experiment": "E2",
+        "base": "plain",
+        "method": "none",
+        "shift": 0.0,
+        "participant": 22,
+        "bal_acc": 0.2963,
+        "macro_f1": 0.2618
+      },
+      {
+        "part": "rotation",
+        "model": "lda",
+        "experiment": "E2",
+        "base": "plain",
+        "method": "none",
+        "shift": 1.0,
+        "participant": 22,
+        "bal_acc": 0.0882,
+        "macro_f1": 0.0653
+      },
+      {
+        "part": "rotation",
+        "model": "lda",
+        "experiment": "E2",
+        "base": "rot_aug",
+        "method": "none",
+        "shift": -1.0,
+        "participant": 22,
+        "bal_acc": 0.3505,
+        "macro_f1": 0.309
+      },
+      {
+        "part": "rotation",
+        "model": "lda",
+        "experiment": "E2",
+        "base": "rot_aug",
+        "method": "none",
+        "shift": 0.0,
+        "participant": 22,
+        "bal_acc": 0.3818,
+        "macro_f1": 0.3244
+      },
+      {
+        "part": "rotation",
+        "model": "lda",
+        "experiment": "E2",
+        "base": "rot_aug",
+        "method": "none",
+        "shift": 1.0,
+        "participant": 22,
+        "bal_acc": 0.2465,
+        "macro_f1": 0.2166
+      },
+      {
+        "part": "rotation",
+        "model": "lda",
+        "experiment": "E2",
+        "base": "plain",
+        "method": "none",
+        "shift": -1.0,
+        "participant": 24,
+        "bal_acc": 0.0558,
+        "macro_f1": 0.0545
+      },
+      {
+        "part": "rotation",
+        "model": "lda",
+        "experiment": "E2",
+        "base": "plain",
+        "method": "none",
+        "shift": 0.0,
+        "participant": 24,
+        "bal_acc": 0.4404,
+        "macro_f1": 0.3964
+      },
+      {
+        "part": "rotation",
+        "model": "lda",
+        "experiment": "E2",
+        "base": "plain",
+        "method": "none",
+        "shift": 1.0,
+        "participant": 24,
+        "bal_acc": 0.1938,
+        "macro_f1": 0.135
+      },
+      {
+        "part": "rotation",
+        "model": "lda",
+        "experiment": "E2",
+        "base": "rot_aug",
+        "method": "none",
+        "shift": -1.0,
+        "participant": 24,
+        "bal_acc": 0.323,
+        "macro_f1": 0.2813
+      },
+      {
+        "part": "rotation",
+        "model": "lda",
+        "experiment": "E2",
+        "base": "rot_aug",
+        "method": "none",
+        "shift": 0.0,
+        "participant": 24,
+        "bal_acc": 0.4114,
+        "macro_f1": 0.3795
+      },
+      {
+        "part": "rotation",
+        "model": "lda",
+        "experiment": "E2",
+        "base": "rot_aug",
+        "method": "none",
+        "shift": 1.0,
+        "participant": 24,
+        "bal_acc": 0.3962,
+        "macro_f1": 0.3504
+      },
+      {
+        "part": "rotation",
+        "model": "lda",
+        "experiment": "E2",
+        "base": "plain",
+        "method": "none",
+        "shift": -1.0,
+        "participant": 27,
+        "bal_acc": 0.134,
+        "macro_f1": 0.0916
+      },
+      {
+        "part": "rotation",
+        "model": "lda",
+        "experiment": "E2",
+        "base": "plain",
+        "method": "none",
+        "shift": 0.0,
+        "participant": 27,
+        "bal_acc": 0.5246,
+        "macro_f1": 0.474
+      },
+      {
+        "part": "rotation",
+        "model": "lda",
+        "experiment": "E2",
+        "base": "plain",
+        "method": "none",
+        "shift": 1.0,
+        "participant": 27,
+        "bal_acc": 0.2094,
+        "macro_f1": 0.1276
+      },
+      {
+        "part": "rotation",
+        "model": "lda",
+        "experiment": "E2",
+        "base": "rot_aug",
+        "method": "none",
+        "shift": -1.0,
+        "participant": 27,
+        "bal_acc": 0.297,
+        "macro_f1": 0.2361
+      },
+      {
+        "part": "rotation",
+        "model": "lda",
+        "experiment": "E2",
+        "base": "rot_aug",
+        "method": "none",
+        "shift": 0.0,
+        "participant": 27,
+        "bal_acc": 0.3529,
+        "macro_f1": 0.2992
+      },
+      {
+        "part": "rotation",
+        "model": "lda",
+        "experiment": "E2",
+        "base": "rot_aug",
+        "method": "none",
+        "shift": 1.0,
+        "participant": 27,
+        "bal_acc": 0.3382,
+        "macro_f1": 0.2771
+      },
+      {
+        "part": "rotation",
+        "model": "lda",
+        "experiment": "E2",
+        "base": "plain",
+        "method": "none",
+        "shift": -1.0,
+        "participant": 31,
+        "bal_acc": 0.0783,
+        "macro_f1": 0.0402
+      },
+      {
+        "part": "rotation",
+        "model": "lda",
+        "experiment": "E2",
+        "base": "plain",
+        "method": "none",
+        "shift": 0.0,
+        "participant": 31,
+        "bal_acc": 0.4509,
+        "macro_f1": 0.4208
+      },
+      {
+        "part": "rotation",
+        "model": "lda",
+        "experiment": "E2",
+        "base": "plain",
+        "method": "none",
+        "shift": 1.0,
+        "participant": 31,
+        "bal_acc": 0.1125,
+        "macro_f1": 0.073
+      },
+      {
+        "part": "rotation",
+        "model": "lda",
+        "experiment": "E2",
+        "base": "rot_aug",
+        "method": "none",
+        "shift": -1.0,
+        "participant": 31,
+        "bal_acc": 0.3201,
+        "macro_f1": 0.2875
+      },
+      {
+        "part": "rotation",
+        "model": "lda",
+        "experiment": "E2",
+        "base": "rot_aug",
+        "method": "none",
+        "shift": 0.0,
+        "participant": 31,
+        "bal_acc": 0.2929,
+        "macro_f1": 0.245
+      },
+      {
+        "part": "rotation",
+        "model": "lda",
+        "experiment": "E2",
+        "base": "rot_aug",
+        "method": "none",
+        "shift": 1.0,
+        "participant": 31,
+        "bal_acc": 0.3028,
+        "macro_f1": 0.2779
+      },
+      {
+        "part": "rotation",
+        "model": "lda",
+        "experiment": "E2",
+        "base": "plain",
+        "method": "none",
+        "shift": -1.0,
+        "participant": 35,
+        "bal_acc": 0.0869,
+        "macro_f1": 0.079
+      },
+      {
+        "part": "rotation",
+        "model": "lda",
+        "experiment": "E2",
+        "base": "plain",
+        "method": "none",
+        "shift": 0.0,
+        "participant": 35,
+        "bal_acc": 0.5832,
+        "macro_f1": 0.5795
+      },
+      {
+        "part": "rotation",
+        "model": "lda",
+        "experiment": "E2",
+        "base": "plain",
+        "method": "none",
+        "shift": 1.0,
+        "participant": 35,
+        "bal_acc": 0.1386,
+        "macro_f1": 0.1123
+      },
+      {
+        "part": "rotation",
+        "model": "lda",
+        "experiment": "E2",
+        "base": "rot_aug",
+        "method": "none",
+        "shift": -1.0,
+        "participant": 35,
+        "bal_acc": 0.3149,
+        "macro_f1": 0.3043
+      },
+      {
+        "part": "rotation",
+        "model": "lda",
+        "experiment": "E2",
+        "base": "rot_aug",
+        "method": "none",
+        "shift": 0.0,
+        "participant": 35,
+        "bal_acc": 0.3583,
+        "macro_f1": 0.3121
+      },
+      {
+        "part": "rotation",
+        "model": "lda",
+        "experiment": "E2",
+        "base": "rot_aug",
+        "method": "none",
+        "shift": 1.0,
+        "participant": 35,
+        "bal_acc": 0.4854,
+        "macro_f1": 0.4624
+      },
+      {
+        "part": "rotation",
+        "model": "lda",
+        "experiment": "E2",
+        "base": "plain",
+        "method": "none",
+        "shift": -1.0,
+        "participant": 38,
+        "bal_acc": 0.225,
+        "macro_f1": 0.1783
+      },
+      {
+        "part": "rotation",
+        "model": "lda",
+        "experiment": "E2",
+        "base": "plain",
+        "method": "none",
+        "shift": 0.0,
+        "participant": 38,
+        "bal_acc": 0.7486,
+        "macro_f1": 0.7385
+      },
+      {
+        "part": "rotation",
+        "model": "lda",
+        "experiment": "E2",
+        "base": "plain",
+        "method": "none",
+        "shift": 1.0,
+        "participant": 38,
+        "bal_acc": 0.1412,
+        "macro_f1": 0.1045
+      },
+      {
+        "part": "rotation",
+        "model": "lda",
+        "experiment": "E2",
+        "base": "rot_aug",
+        "method": "none",
+        "shift": -1.0,
+        "participant": 38,
+        "bal_acc": 0.6731,
+        "macro_f1": 0.659
+      },
+      {
+        "part": "rotation",
+        "model": "lda",
+        "experiment": "E2",
+        "base": "rot_aug",
+        "method": "none",
+        "shift": 0.0,
+        "participant": 38,
+        "bal_acc": 0.6611,
+        "macro_f1": 0.6531
+      },
+      {
+        "part": "rotation",
+        "model": "lda",
+        "experiment": "E2",
+        "base": "rot_aug",
+        "method": "none",
+        "shift": 1.0,
+        "participant": 38,
+        "bal_acc": 0.5403,
+        "macro_f1": 0.5356
+      },
+      {
+        "part": "rotation",
+        "model": "lda",
+        "experiment": "E2",
+        "base": "plain",
+        "method": "none",
+        "shift": -1.0,
+        "participant": 40,
+        "bal_acc": 0.1989,
+        "macro_f1": 0.1497
+      },
+      {
+        "part": "rotation",
+        "model": "lda",
+        "experiment": "E2",
+        "base": "plain",
+        "method": "none",
+        "shift": 0.0,
+        "participant": 40,
+        "bal_acc": 0.7384,
+        "macro_f1": 0.7263
+      },
+      {
+        "part": "rotation",
+        "model": "lda",
+        "experiment": "E2",
+        "base": "plain",
+        "method": "none",
+        "shift": 1.0,
+        "participant": 40,
+        "bal_acc": 0.1113,
+        "macro_f1": 0.0842
+      },
+      {
+        "part": "rotation",
+        "model": "lda",
+        "experiment": "E2",
+        "base": "rot_aug",
+        "method": "none",
+        "shift": -1.0,
+        "participant": 40,
+        "bal_acc": 0.4777,
+        "macro_f1": 0.455
+      },
+      {
+        "part": "rotation",
+        "model": "lda",
+        "experiment": "E2",
+        "base": "rot_aug",
+        "method": "none",
+        "shift": 0.0,
+        "participant": 40,
+        "bal_acc": 0.4602,
+        "macro_f1": 0.4346
+      },
+      {
+        "part": "rotation",
+        "model": "lda",
+        "experiment": "E2",
+        "base": "rot_aug",
+        "method": "none",
+        "shift": 1.0,
+        "participant": 40,
+        "bal_acc": 0.3649,
+        "macro_f1": 0.3359
+      }
+    ],
+    "failure": [
+      {
+        "part": "failure",
+        "model": "lda",
+        "experiment": "E1",
+        "method": "none",
+        "mode": "none",
+        "n_failed": 0.0,
+        "participant": 6,
+        "bal_acc": 0.8433,
+        "macro_f1": 0.8395
+      },
+      {
+        "part": "failure",
+        "model": "lda",
+        "experiment": "E1",
+        "method": "none",
+        "mode": "zero",
+        "n_failed": 1.0,
+        "participant": 6,
+        "bal_acc": 0.0989,
+        "macro_f1": 0.0402
+      },
+      {
+        "part": "failure",
+        "model": "lda",
+        "experiment": "E1",
+        "method": "none",
+        "mode": "noise",
+        "n_failed": 1.0,
+        "participant": 6,
+        "bal_acc": 0.3529,
+        "macro_f1": 0.311
+      },
+      {
+        "part": "failure",
+        "model": "lda",
+        "experiment": "E1",
+        "method": "none",
+        "mode": "removed",
+        "n_failed": 1.0,
+        "participant": 6,
+        "bal_acc": 0.835,
+        "macro_f1": 0.8309
+      },
+      {
+        "part": "failure",
+        "model": "lda",
+        "experiment": "E1",
+        "method": "none",
+        "mode": "zero",
+        "n_failed": 2.0,
+        "participant": 6,
+        "bal_acc": 0.0789,
+        "macro_f1": 0.0231
+      },
+      {
+        "part": "failure",
+        "model": "lda",
+        "experiment": "E1",
+        "method": "none",
+        "mode": "noise",
+        "n_failed": 2.0,
+        "participant": 6,
+        "bal_acc": 0.2416,
+        "macro_f1": 0.1897
+      },
+      {
+        "part": "failure",
+        "model": "lda",
+        "experiment": "E1",
+        "method": "none",
+        "mode": "removed",
+        "n_failed": 2.0,
+        "participant": 6,
+        "bal_acc": 0.8248,
+        "macro_f1": 0.8205
+      },
+      {
+        "part": "failure",
+        "model": "lda",
+        "experiment": "E1",
+        "method": "none",
+        "mode": "none",
+        "n_failed": 0.0,
+        "participant": 11,
+        "bal_acc": 0.8885,
+        "macro_f1": 0.8857
+      },
+      {
+        "part": "failure",
+        "model": "lda",
+        "experiment": "E1",
+        "method": "none",
+        "mode": "zero",
+        "n_failed": 1.0,
+        "participant": 11,
+        "bal_acc": 0.0883,
+        "macro_f1": 0.0285
+      },
+      {
+        "part": "failure",
+        "model": "lda",
+        "experiment": "E1",
+        "method": "none",
+        "mode": "noise",
+        "n_failed": 1.0,
+        "participant": 11,
+        "bal_acc": 0.3618,
+        "macro_f1": 0.3076
+      },
+      {
+        "part": "failure",
+        "model": "lda",
+        "experiment": "E1",
+        "method": "none",
+        "mode": "removed",
+        "n_failed": 1.0,
+        "participant": 11,
+        "bal_acc": 0.8812,
+        "macro_f1": 0.8783
+      },
+      {
+        "part": "failure",
+        "model": "lda",
+        "experiment": "E1",
+        "method": "none",
+        "mode": "zero",
+        "n_failed": 2.0,
+        "participant": 11,
+        "bal_acc": 0.0727,
+        "macro_f1": 0.0172
+      },
+      {
+        "part": "failure",
+        "model": "lda",
+        "experiment": "E1",
+        "method": "none",
+        "mode": "noise",
+        "n_failed": 2.0,
+        "participant": 11,
+        "bal_acc": 0.2539,
+        "macro_f1": 0.1892
+      },
+      {
+        "part": "failure",
+        "model": "lda",
+        "experiment": "E1",
+        "method": "none",
+        "mode": "removed",
+        "n_failed": 2.0,
+        "participant": 11,
+        "bal_acc": 0.87,
+        "macro_f1": 0.8667
+      },
+      {
+        "part": "failure",
+        "model": "lda",
+        "experiment": "E1",
+        "method": "none",
+        "mode": "none",
+        "n_failed": 0.0,
+        "participant": 21,
+        "bal_acc": 0.847,
+        "macro_f1": 0.8464
+      },
+      {
+        "part": "failure",
+        "model": "lda",
+        "experiment": "E1",
+        "method": "none",
+        "mode": "zero",
+        "n_failed": 1.0,
+        "participant": 21,
+        "bal_acc": 0.0793,
+        "macro_f1": 0.0268
+      },
+      {
+        "part": "failure",
+        "model": "lda",
+        "experiment": "E1",
+        "method": "none",
+        "mode": "noise",
+        "n_failed": 1.0,
+        "participant": 21,
+        "bal_acc": 0.3084,
+        "macro_f1": 0.2573
+      },
+      {
+        "part": "failure",
+        "model": "lda",
+        "experiment": "E1",
+        "method": "none",
+        "mode": "removed",
+        "n_failed": 1.0,
+        "participant": 21,
+        "bal_acc": 0.838,
+        "macro_f1": 0.8366
+      },
+      {
+        "part": "failure",
+        "model": "lda",
+        "experiment": "E1",
+        "method": "none",
+        "mode": "zero",
+        "n_failed": 2.0,
+        "participant": 21,
+        "bal_acc": 0.0727,
+        "macro_f1": 0.0178
+      },
+      {
+        "part": "failure",
+        "model": "lda",
+        "experiment": "E1",
+        "method": "none",
+        "mode": "noise",
+        "n_failed": 2.0,
+        "participant": 21,
+        "bal_acc": 0.2219,
+        "macro_f1": 0.1631
+      },
+      {
+        "part": "failure",
+        "model": "lda",
+        "experiment": "E1",
+        "method": "none",
+        "mode": "removed",
+        "n_failed": 2.0,
+        "participant": 21,
+        "bal_acc": 0.8268,
+        "macro_f1": 0.8246
+      },
+      {
+        "part": "failure",
+        "model": "lda",
+        "experiment": "E1",
+        "method": "none",
+        "mode": "none",
+        "n_failed": 0.0,
+        "participant": 22,
+        "bal_acc": 0.9219,
+        "macro_f1": 0.9182
+      },
+      {
+        "part": "failure",
+        "model": "lda",
+        "experiment": "E1",
+        "method": "none",
+        "mode": "zero",
+        "n_failed": 1.0,
+        "participant": 22,
+        "bal_acc": 0.1094,
+        "macro_f1": 0.0505
+      },
+      {
+        "part": "failure",
+        "model": "lda",
+        "experiment": "E1",
+        "method": "none",
+        "mode": "noise",
+        "n_failed": 1.0,
+        "participant": 22,
+        "bal_acc": 0.4234,
+        "macro_f1": 0.3702
+      },
+      {
+        "part": "failure",
+        "model": "lda",
+        "experiment": "E1",
+        "method": "none",
+        "mode": "removed",
+        "n_failed": 1.0,
+        "participant": 22,
+        "bal_acc": 0.9151,
+        "macro_f1": 0.9114
+      },
+      {
+        "part": "failure",
+        "model": "lda",
+        "experiment": "E1",
+        "method": "none",
+        "mode": "zero",
+        "n_failed": 2.0,
+        "participant": 22,
+        "bal_acc": 0.091,
+        "macro_f1": 0.0318
+      },
+      {
+        "part": "failure",
+        "model": "lda",
+        "experiment": "E1",
+        "method": "none",
+        "mode": "noise",
+        "n_failed": 2.0,
+        "participant": 22,
+        "bal_acc": 0.2802,
+        "macro_f1": 0.2199
+      },
+      {
+        "part": "failure",
+        "model": "lda",
+        "experiment": "E1",
+        "method": "none",
+        "mode": "removed",
+        "n_failed": 2.0,
+        "participant": 22,
+        "bal_acc": 0.9055,
+        "macro_f1": 0.9014
+      },
+      {
+        "part": "failure",
+        "model": "lda",
+        "experiment": "E1",
+        "method": "none",
+        "mode": "none",
+        "n_failed": 0.0,
+        "participant": 24,
+        "bal_acc": 0.8997,
+        "macro_f1": 0.8927
+      },
+      {
+        "part": "failure",
+        "model": "lda",
+        "experiment": "E1",
+        "method": "none",
+        "mode": "zero",
+        "n_failed": 1.0,
+        "participant": 24,
+        "bal_acc": 0.085,
+        "macro_f1": 0.0304
+      },
+      {
+        "part": "failure",
+        "model": "lda",
+        "experiment": "E1",
+        "method": "none",
+        "mode": "noise",
+        "n_failed": 1.0,
+        "participant": 24,
+        "bal_acc": 0.4235,
+        "macro_f1": 0.3736
+      },
+      {
+        "part": "failure",
+        "model": "lda",
+        "experiment": "E1",
+        "method": "none",
+        "mode": "removed",
+        "n_failed": 1.0,
+        "participant": 24,
+        "bal_acc": 0.894,
+        "macro_f1": 0.887
+      },
+      {
+        "part": "failure",
+        "model": "lda",
+        "experiment": "E1",
+        "method": "none",
+        "mode": "zero",
+        "n_failed": 2.0,
+        "participant": 24,
+        "bal_acc": 0.082,
+        "macro_f1": 0.0244
+      },
+      {
+        "part": "failure",
+        "model": "lda",
+        "experiment": "E1",
+        "method": "none",
+        "mode": "noise",
+        "n_failed": 2.0,
+        "participant": 24,
+        "bal_acc": 0.294,
+        "macro_f1": 0.2301
+      },
+      {
+        "part": "failure",
+        "model": "lda",
+        "experiment": "E1",
+        "method": "none",
+        "mode": "removed",
+        "n_failed": 2.0,
+        "participant": 24,
+        "bal_acc": 0.8874,
+        "macro_f1": 0.8804
+      },
+      {
+        "part": "failure",
+        "model": "lda",
+        "experiment": "E1",
+        "method": "none",
+        "mode": "none",
+        "n_failed": 0.0,
+        "participant": 27,
+        "bal_acc": 0.867,
+        "macro_f1": 0.8629
+      },
+      {
+        "part": "failure",
+        "model": "lda",
+        "experiment": "E1",
+        "method": "none",
+        "mode": "zero",
+        "n_failed": 1.0,
+        "participant": 27,
+        "bal_acc": 0.0821,
+        "macro_f1": 0.0256
+      },
+      {
+        "part": "failure",
+        "model": "lda",
+        "experiment": "E1",
+        "method": "none",
+        "mode": "noise",
+        "n_failed": 1.0,
+        "participant": 27,
+        "bal_acc": 0.2432,
+        "macro_f1": 0.1935
+      },
+      {
+        "part": "failure",
+        "model": "lda",
+        "experiment": "E1",
+        "method": "none",
+        "mode": "removed",
+        "n_failed": 1.0,
+        "participant": 27,
+        "bal_acc": 0.8598,
+        "macro_f1": 0.8565
+      },
+      {
+        "part": "failure",
+        "model": "lda",
+        "experiment": "E1",
+        "method": "none",
+        "mode": "zero",
+        "n_failed": 2.0,
+        "participant": 27,
+        "bal_acc": 0.0756,
+        "macro_f1": 0.0196
+      },
+      {
+        "part": "failure",
+        "model": "lda",
+        "experiment": "E1",
+        "method": "none",
+        "mode": "noise",
+        "n_failed": 2.0,
+        "participant": 27,
+        "bal_acc": 0.1719,
+        "macro_f1": 0.1149
+      },
+      {
+        "part": "failure",
+        "model": "lda",
+        "experiment": "E1",
+        "method": "none",
+        "mode": "removed",
+        "n_failed": 2.0,
+        "participant": 27,
+        "bal_acc": 0.8496,
+        "macro_f1": 0.8467
+      },
+      {
+        "part": "failure",
+        "model": "lda",
+        "experiment": "E1",
+        "method": "none",
+        "mode": "none",
+        "n_failed": 0.0,
+        "participant": 31,
+        "bal_acc": 0.9333,
+        "macro_f1": 0.93
+      },
+      {
+        "part": "failure",
+        "model": "lda",
+        "experiment": "E1",
+        "method": "none",
+        "mode": "zero",
+        "n_failed": 1.0,
+        "participant": 31,
+        "bal_acc": 0.0879,
+        "macro_f1": 0.0301
+      },
+      {
+        "part": "failure",
+        "model": "lda",
+        "experiment": "E1",
+        "method": "none",
+        "mode": "noise",
+        "n_failed": 1.0,
+        "participant": 31,
+        "bal_acc": 0.2381,
+        "macro_f1": 0.1888
+      },
+      {
+        "part": "failure",
+        "model": "lda",
+        "experiment": "E1",
+        "method": "none",
+        "mode": "removed",
+        "n_failed": 1.0,
+        "participant": 31,
+        "bal_acc": 0.9258,
+        "macro_f1": 0.9223
+      },
+      {
+        "part": "failure",
+        "model": "lda",
+        "experiment": "E1",
+        "method": "none",
+        "mode": "zero",
+        "n_failed": 2.0,
+        "participant": 31,
+        "bal_acc": 0.0761,
+        "macro_f1": 0.0199
+      },
+      {
+        "part": "failure",
+        "model": "lda",
+        "experiment": "E1",
+        "method": "none",
+        "mode": "noise",
+        "n_failed": 2.0,
+        "participant": 31,
+        "bal_acc": 0.1621,
+        "macro_f1": 0.1057
+      },
+      {
+        "part": "failure",
+        "model": "lda",
+        "experiment": "E1",
+        "method": "none",
+        "mode": "removed",
+        "n_failed": 2.0,
+        "participant": 31,
+        "bal_acc": 0.9173,
+        "macro_f1": 0.9137
+      },
+      {
+        "part": "failure",
+        "model": "lda",
+        "experiment": "E1",
+        "method": "none",
+        "mode": "none",
+        "n_failed": 0.0,
+        "participant": 35,
+        "bal_acc": 0.8732,
+        "macro_f1": 0.8706
+      },
+      {
+        "part": "failure",
+        "model": "lda",
+        "experiment": "E1",
+        "method": "none",
+        "mode": "zero",
+        "n_failed": 1.0,
+        "participant": 35,
+        "bal_acc": 0.101,
+        "macro_f1": 0.0459
+      },
+      {
+        "part": "failure",
+        "model": "lda",
+        "experiment": "E1",
+        "method": "none",
+        "mode": "noise",
+        "n_failed": 1.0,
+        "participant": 35,
+        "bal_acc": 0.4276,
+        "macro_f1": 0.3841
+      },
+      {
+        "part": "failure",
+        "model": "lda",
+        "experiment": "E1",
+        "method": "none",
+        "mode": "removed",
+        "n_failed": 1.0,
+        "participant": 35,
+        "bal_acc": 0.8684,
+        "macro_f1": 0.8654
+      },
+      {
+        "part": "failure",
+        "model": "lda",
+        "experiment": "E1",
+        "method": "none",
+        "mode": "zero",
+        "n_failed": 2.0,
+        "participant": 35,
+        "bal_acc": 0.0871,
+        "macro_f1": 0.0307
+      },
+      {
+        "part": "failure",
+        "model": "lda",
+        "experiment": "E1",
+        "method": "none",
+        "mode": "noise",
+        "n_failed": 2.0,
+        "participant": 35,
+        "bal_acc": 0.2979,
+        "macro_f1": 0.2425
+      },
+      {
+        "part": "failure",
+        "model": "lda",
+        "experiment": "E1",
+        "method": "none",
+        "mode": "removed",
+        "n_failed": 2.0,
+        "participant": 35,
+        "bal_acc": 0.8619,
+        "macro_f1": 0.8588
+      },
+      {
+        "part": "failure",
+        "model": "lda",
+        "experiment": "E1",
+        "method": "none",
+        "mode": "none",
+        "n_failed": 0.0,
+        "participant": 38,
+        "bal_acc": 0.8546,
+        "macro_f1": 0.8514
+      },
+      {
+        "part": "failure",
+        "model": "lda",
+        "experiment": "E1",
+        "method": "none",
+        "mode": "zero",
+        "n_failed": 1.0,
+        "participant": 38,
+        "bal_acc": 0.0952,
+        "macro_f1": 0.0342
+      },
+      {
+        "part": "failure",
+        "model": "lda",
+        "experiment": "E1",
+        "method": "none",
+        "mode": "noise",
+        "n_failed": 1.0,
+        "participant": 38,
+        "bal_acc": 0.3248,
+        "macro_f1": 0.2802
+      },
+      {
+        "part": "failure",
+        "model": "lda",
+        "experiment": "E1",
+        "method": "none",
+        "mode": "removed",
+        "n_failed": 1.0,
+        "participant": 38,
+        "bal_acc": 0.8484,
+        "macro_f1": 0.8452
+      },
+      {
+        "part": "failure",
+        "model": "lda",
+        "experiment": "E1",
+        "method": "none",
+        "mode": "zero",
+        "n_failed": 2.0,
+        "participant": 38,
+        "bal_acc": 0.0825,
+        "macro_f1": 0.0274
+      },
+      {
+        "part": "failure",
+        "model": "lda",
+        "experiment": "E1",
+        "method": "none",
+        "mode": "noise",
+        "n_failed": 2.0,
+        "participant": 38,
+        "bal_acc": 0.2182,
+        "macro_f1": 0.1636
+      },
+      {
+        "part": "failure",
+        "model": "lda",
+        "experiment": "E1",
+        "method": "none",
+        "mode": "removed",
+        "n_failed": 2.0,
+        "participant": 38,
+        "bal_acc": 0.8415,
+        "macro_f1": 0.8381
+      },
+      {
+        "part": "failure",
+        "model": "lda",
+        "experiment": "E1",
+        "method": "none",
+        "mode": "none",
+        "n_failed": 0.0,
+        "participant": 40,
+        "bal_acc": 0.9029,
+        "macro_f1": 0.8985
+      },
+      {
+        "part": "failure",
+        "model": "lda",
+        "experiment": "E1",
+        "method": "none",
+        "mode": "zero",
+        "n_failed": 1.0,
+        "participant": 40,
+        "bal_acc": 0.0922,
+        "macro_f1": 0.0349
+      },
+      {
+        "part": "failure",
+        "model": "lda",
+        "experiment": "E1",
+        "method": "none",
+        "mode": "noise",
+        "n_failed": 1.0,
+        "participant": 40,
+        "bal_acc": 0.3621,
+        "macro_f1": 0.3125
+      },
+      {
+        "part": "failure",
+        "model": "lda",
+        "experiment": "E1",
+        "method": "none",
+        "mode": "removed",
+        "n_failed": 1.0,
+        "participant": 40,
+        "bal_acc": 0.8948,
+        "macro_f1": 0.89
+      },
+      {
+        "part": "failure",
+        "model": "lda",
+        "experiment": "E1",
+        "method": "none",
+        "mode": "zero",
+        "n_failed": 2.0,
+        "participant": 40,
+        "bal_acc": 0.0757,
+        "macro_f1": 0.0191
+      },
+      {
+        "part": "failure",
+        "model": "lda",
+        "experiment": "E1",
+        "method": "none",
+        "mode": "noise",
+        "n_failed": 2.0,
+        "participant": 40,
+        "bal_acc": 0.2461,
+        "macro_f1": 0.1929
+      },
+      {
+        "part": "failure",
+        "model": "lda",
+        "experiment": "E1",
+        "method": "none",
+        "mode": "removed",
+        "n_failed": 2.0,
+        "participant": 40,
+        "bal_acc": 0.8846,
+        "macro_f1": 0.8793
+      }
+    ]
+  },
+  "scores_table": "results\\robust_lda_dev_scores.csv",
+  "figures": [
+    "reports\\figures\\07_sensor_robust_lda_dev.png",
+    "reports\\figures\\07_rotation_robust_lda_dev.png",
+    "reports\\figures\\07_failure_robust_lda_dev.png"
+  ]
+}

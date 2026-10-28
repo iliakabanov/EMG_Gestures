@@ -1,0 +1,47 @@
+# Stage 7, LDA (log + shrink, the stage-3 variant) on the 10 dev participants: what recognition needs from the sensor.
+#   channels  E1 (trials 1-5 -> 6-7) on channel sets: 12 wrist, each wrist ring (6), 16 forearm, all 28
+#   greedy    E1, backward elimination over the 12 wrist channels; the drop order chosen here is frozen for test
+#   rates     E1 at 2048 / 1024 / 512 / 256 Hz: causal Butterworth anti-alias low-pass (order 8) at 0.4 x new rate,
+#             every k-th sample, band-pass 20 Hz .. min(450, 0.4 x new rate) recomputed for the new rate
+#   rotation  E2 without calibration (own session-1 model), sessions 2-3 seen through a bracelet turned by
+#             -1 / 0 / +1 electrode positions (60 degrees, ~2.7 cm on a 16 cm wrist); trained as is or on
+#             session 1 stacked with its +-1 rotated copies
+#   failure   E1, 1 or 2 wrist channels fail on the test trials (all 12 channels, all 66 pairs): flat line, or noise
+#             of a normal amplitude without EMG; plus the model retrained without the failed channels
+name: robust_lda_dev
+experiment: robust_lda
+participants: dev          # from configs/splits.yaml (10 people)
+seed: 42
+
+preprocess:                # as in stages 3-6 (the wrist feature cache is shared)
+  band_hz: [20, 450]
+  order: 4
+  notch_hz: []
+  window_ms: 200
+  step_ms: 50
+  warmup_ms: 200
+
+features:
+  zc_thr_mv: 0.01
+  ssc_thr_mv: 0.01
+
+lda: {solver: lsqr, shrinkage: auto}
+
+channel_sets: [wrist, ring3, ring4, forearm, forearm_wrist]
+greedy: {}                 # search here; test gets {order: [...]} from results/robust_lda_dev.json
+
+rates:
+  downsample: [1, 2, 4, 8] # 2048, 1024, 512, 256 Hz
+  antialias_ratio: 0.4
+  antialias_order: 8
+
+rotation:
+  shifts: [-1, 0, 1]
+  train_shifts:
+    plain: [0]
+    rot_aug: [-1, 0, 1]
+
+failure:
+  n_failed: [1, 2]
+  modes: [zero, noise]
+  noise_rms_mv: 0.043      # median RMS of a wrist channel during gestures (stage 2, quality_dev)

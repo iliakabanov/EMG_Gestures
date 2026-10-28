@@ -39,6 +39,12 @@ FOREARM_IDX = list(range(0, 16))
 WRIST_IDX = list(range(17, 23)) + list(range(25, 31))
 UNUSED_IDX = [16, 23, 24, 31]
 
+# Wrist rings as positions in WRIST_IDX order. Electrodelocation.pdf: columns 17-22 are electrodes 18-23 of ring 3
+# (nearer the elbow), columns 25-30 electrodes 26-31 of ring 4 (nearer the hand). Numbers run consecutively around
+# each ring (23 sits next to 18), and ring 4 lies under ring 3 (26 under 18, 31 under 23): W(k) and W(k+6) share
+# an angle. Even spacing (60 degrees, ~2.7 cm on the median 16.2 cm wrist of subject-info.csv) is an assumption.
+WRIST_RINGS = [list(range(0, 6)), list(range(6, 12))]
+
 GESTURE_NAMES = [
     "Lateral Prehension", "Thumb Adduction", "Thumb and Little Finger Opposition",
     "Thumb and Index Finger Opposition", "Thumb and Index Finger Extension",
@@ -50,6 +56,26 @@ GESTURE_NAMES = [
 # Short labels in the same (MotionSequence.txt) order, for plots and confusion matrices.
 GESTURE_SHORT = ["LP", "TA", "TLFO", "TIFO", "TIFE", "TLFE", "IMFE", "LFE", "IFE", "TE",
                  "WE", "WF", "FS", "FP", "HO", "HC", "Rest"]
+
+
+def channel_names(record_channels: list[int]) -> list[str]:
+    """Names of record columns: F1..F16 for the forearm, W1..W12 for the wrist."""
+    names = {c: f"F{c + 1}" for c in FOREARM_IDX} | {c: f"W{k + 1}" for k, c in enumerate(WRIST_IDX)}
+    return [names[c] for c in record_channels]
+
+
+def ring_rotation(shift: int) -> np.ndarray:
+    """Order of the 12 wrist channels after the bracelet turns by `shift` electrode positions.
+
+    x[..., ring_rotation(s), ...] is what the device records after the turn: position k of a ring now reads the
+    site where electrode (k + s) mod 6 of that ring used to be. Both rings turn together. Which way around the
+    wrist a positive shift goes is not known, so both signs are tested.
+    """
+    perm = np.empty(len(WRIST_IDX), dtype=np.int64)
+    for ring in WRIST_RINGS:
+        for k, pos in enumerate(ring):
+            perm[pos] = ring[(k + shift) % len(ring)]
+    return perm
 
 
 def record_relpath(session: int, participant: int, gesture: int, trial: int) -> str:

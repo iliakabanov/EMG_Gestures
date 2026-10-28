@@ -483,8 +483,150 @@ def run_stream(cfg: dict) -> dict:
     }
 
 
+def _robust_outputs(rows: list[dict], name: str, greedy_order: list[str] | None = None) -> dict:
+    """Shared tail of the stage-7 runners: score table, per-participant tables, summaries, figures."""
+    import pandas as pd
+
+    import robustness
+
+    scores = pd.DataFrame(rows)
+    csv_path = ROOT / "results" / f"{name}_scores.csv"
+    scores.to_csv(csv_path, index=False)
+    pp = robustness.per_participant(scores)
+    figures = [robustness.plot_sensor(pp, name, greedy_order)]
+    if "rotation" in pp:
+        figures.append(robustness.plot_rotation(pp["rotation"], name))
+    out = {}
+    if "failure" in pp:
+        figures.append(robustness.plot_failure(pp["failure"], name))
+        out["failure_by_channel"] = robustness.failure_by_channel(scores).round(4).to_dict("records")
+    return {
+        "summary": {k: robustness.summary(v).round(4).to_dict("records") for k, v in pp.items()},
+        **out,
+        "per_participant": {k: v.round(4).to_dict("records") for k, v in pp.items()},
+        "scores_table": str(csv_path.relative_to(ROOT)),
+        "figures": [str(Path(f).relative_to(ROOT)) for f in figures if f],
+    }
+
+
+def run_robust_lda(cfg: dict) -> dict:
+    """Stage 7, LDA: channel sets, greedy channel removal and sampling rate (E1), bracelet rotation (E2),
+    channel failure (E1). Each part runs if its section is in the config; see src/robustness.py."""
+    import robustness
+    from data import FOREARM_IDX, FS, WRIST_IDX, channel_names
+    from features import feature_names, feature_table, rate_band
+    from models import log_amplitude
+
+    participants = resolve_participants(cfg["participants"])
+    idx = build_index()
+    idx = idx[idx.participant.isin(participants)]
+    missing = sorted(set(participants) - set(idx.participant))
+    if missing:
+        raise FileNotFoundError(f"no local data for participants {missing}; run src/data.py first")
+
+    feat_cfg = {**cfg["preprocess"], **cfg["features"]}
+    params, seed = cfg["lda"], cfg.get("seed", 42)
+    meta_cols = ["participant", "session", "trial"]
+
+    def load(fcfg: dict, record: list[int]) -> tuple:
+        """Feature table -> (meta, gestures, log features, feature column names)."""
+        names = feature_names(channel_names(record))
+        t = feature_table(idx, fcfg, channel_names(record))
+        return t[meta_cols], t.gesture.to_numpy(), log_amplitude(t[names].to_numpy(), names), names
+
+    meta, y, F, cols = load(feat_cfg, WRIST_IDX)    # the wrist table of stages 3-6 (same cache)
+    wrist = channel_names(WRIST_IDX)
+    rows, out = [], {}
+
+    if "channel_sets" in cfg:
+        rec = FOREARM_IDX + WRIST_IDX
+        m28, y28, F28, c28 = load({**feat_cfg, "record_channels": rec}, rec)
+        for name in cfg["channel_sets"]:
+            chs = robustness.CHANNEL_SETS[name]
+            rows += robustness.lda_e1(F28, m28, y28, robustness.cols_of(c28, chs), params,
+                                      {"part": "channels", "model": "lda", "experiment": "E1", "setting": name,
+                                       "n_channels": len(chs)})
+            print(f"channels: {name} done", flush=True)
+        del m28, y28, F28
+
+    if "greedy" in cfg:
+        order = cfg["greedy"].get("order") or robustness.greedy_order(F, meta, y, cols, wrist, params)
+        out.update(greedy_order=order, greedy_frozen=bool(cfg["greedy"].get("order")))
+        for n in range(len(order), 0, -1):
+            rows += robustness.lda_e1(F, meta, y, robustness.cols_of(cols, order[len(order) - n:]), params,
+                                      {"part": "greedy", "model": "lda", "experiment": "E1", "n_channels": n})
+
+    if "rates" in cfg:
+        rc = cfg["rates"]
+        for k in rc["downsample"]:
+            fcfg = feat_cfg if k == 1 else {**feat_cfg, "downsample": k, "antialias_ratio": rc["antialias_ratio"],
+                                            "antialias_order": rc["antialias_order"]}
+            mk, yk, Fk, ck = load(fcfg, WRIST_IDX)
+            rows += robustness.lda_e1(Fk, mk, yk, np.arange(len(ck)), params,
+                                      {"part": "rate", "model": "lda", "experiment": "E1", "fs_hz": FS / k,
+                                       "band_hi_hz": rate_band(fcfg)[1]})
+            print(f"rates: {FS / k:g} Hz done", flush=True)
+
+    if "rotation" in cfg:
+        rows += robustness.lda_rotation(F, meta, y, cols, params, cfg["rotation"]["shifts"],
+                                        cfg["rotation"]["train_shifts"])
+
+    if "failure" in cfg:
+        fc = cfg["failure"]
+        bank = robustness.noise_feature_bank(feat_cfg, fc["noise_rms_mv"], seed)
+        rows += robustness.lda_failure(F, meta, y, cols, wrist, params, fc["modes"], fc["n_failed"], bank, seed)
+
+    return {"participants": participants, **out, **_robust_outputs(rows, cfg["name"], out.get("greedy_order"))}
+
+
+def run_robust_tcn(cfg: dict) -> dict:
+    """Stage 7, TCN with the stage-5 recipe (E3 base + AdaBN + fine-tuning on the 3x1 calibration): bracelet
+    rotation for base networks trained as is and with rotation augmentation (`bases`: overrides of `train`),
+    channel failure after the calibration. Base networks are cached as in stage 5 (the plain ones are reused)."""
+    import torch
+
+    import adapt
+    import robustness
+    import signals
+    import tcn
+    from preprocess import ms_to_samples
+
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+
+    participants = resolve_participants(cfg["participants"])
+    idx = build_index()
+    idx = idx[idx.participant.isin(participants)]
+    missing = sorted(set(participants) - set(idx.participant))
+    if missing:
+        raise FileNotFoundError(f"no local data for participants {missing}; run src/data.py first")
+
+    meta, X = signals.signal_table(idx, cfg["preprocess"])
+    y = meta.gesture.to_numpy() - 1
+    fs = signals.effective_fs(cfg["preprocess"]["decimate"])
+    win = ms_to_samples(cfg["windows"]["window_ms"], fs)
+    step = ms_to_samples(cfg["windows"]["step_ms"], fs)
+    ends = tcn.window_ends(win, step, (X.shape[2] - win) // step + 1)
+    cfg = {**cfg, "crop": ms_to_samples(cfg["train"]["crop_ms"], fs)}
+    test_ps = resolve_participants("test") if cfg["cross_subject"] == "holdout" else None
+    fc = cfg.get("failure")
+    bank = robustness.noise_signal_bank(cfg["preprocess"], fc["noise_rms_mv"], fc["bank"], cfg.get("seed", 42)) \
+        if fc else None
+
+    rows = []
+    for base_name, over in cfg["bases"].items():
+        bcfg = {**cfg, "train": {**cfg["train"], **over}}
+        for exp in cfg["experiments"]:
+            for split in _target_splits(meta, exp, cfg, test_ps):
+                base = adapt.base_tcn(X, y, bcfg, participants, split, cfg["epochs"][exp], device)
+                rows += robustness.tcn_split(base, base_name, X, meta, split, cfg, ends, fs, device, bank)
+    return {"participants": participants, **_robust_outputs(rows, cfg["name"])}
+
+
 RUNNERS = {"quality": run_quality, "baseline": run_baseline, "tcn": run_tcn,
-           "adapt_lda": run_adapt_lda, "adapt_tcn": run_adapt_tcn, "stream": run_stream}
+           "adapt_lda": run_adapt_lda, "adapt_tcn": run_adapt_tcn, "stream": run_stream,
+           "robust_lda": run_robust_lda, "robust_tcn": run_robust_tcn}
 
 
 def _to_jsonable(o):

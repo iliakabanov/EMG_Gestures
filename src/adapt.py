@@ -292,6 +292,20 @@ def finetune(model: tcn.TCN, X_cal: np.ndarray, y_cal: np.ndarray, spec: dict, c
     model.eval()
 
 
+def adapted(model: tcn.TCN, X_cal: np.ndarray, y_cal: np.ndarray, spec: dict, crop: int, seed: int,
+            device: str) -> tcn.TCN:
+    """Copy of a base model adapted to a new session by a method spec (`unlabeled`, `finetune`; see the module
+    docstring). The base model is not modified."""
+    m = copy.deepcopy(model)
+    if spec.get("unlabeled", "none") in ("input_scale", "adabn"):
+        set_input_scale(m, X_cal)
+    if spec.get("unlabeled", "none") == "adabn":
+        adabn(m, X_cal, device)
+    if spec.get("finetune", "none") != "none":
+        finetune(m, X_cal, y_cal, spec, crop, seed, device)
+    return m
+
+
 def scratch_tcn(X_cal: np.ndarray, y_cal: np.ndarray, n_classes: int, cfg: dict, spec: dict, seed: int,
                 device: str) -> tcn.TCN:
     """A TCN from random weights trained on one session's labelled calibration only.
@@ -381,15 +395,10 @@ def evaluate_tcn(model: tcn.TCN, X: np.ndarray, meta: pd.DataFrame, split: Split
                                        {"experiment": split.experiment, "model": "tcn", "method": name,
                                         **b.tags(), "cost_s": cost_seconds(spec, b), "split": split.name})
                     continue
-                m = copy.deepcopy(model)
+                m = model
                 if b:
                     X_cal, y_cal = calib_signals(X, meta, sess, b, warmup_s, fs)
-                    if spec.get("unlabeled", "none") in ("input_scale", "adabn"):
-                        set_input_scale(m, X_cal)
-                    if spec.get("unlabeled", "none") == "adabn":
-                        adabn(m, X_cal, device)
-                    if spec.get("finetune", "none") != "none":
-                        finetune(m, X_cal, y_cal, spec, cfg["crop"], cfg.get("seed", 42), device)
+                    m = adapted(model, X_cal, y_cal, spec, cfg["crop"], cfg.get("seed", 42), device)
                 pred = tcn.predict_windows(m, X[te], ends, device).ravel()
                 rows += score_rows(win_meta, y_true, pred,
                                    {"experiment": split.experiment, "model": "tcn", "method": name,

@@ -18,7 +18,7 @@ import numpy as np
 import pandas as pd
 
 from data import FS, ROOT, load_trial
-from preprocess import design_filter, filter_causal, ms_to_samples, sliding_windows
+from preprocess import design_antialias, design_filter, filter_causal, ms_to_samples, sliding_windows
 
 FEATURES = ["MAV", "RMS", "WL", "ZC", "SSC"]
 CACHE_DIR = ROOT / "data" / "cache"
@@ -41,22 +41,45 @@ def feature_names(channels: list[str]) -> list[str]:
     return [f"{f}_{c}" for f in FEATURES for c in channels]
 
 
-def trial_features(x: np.ndarray, sos: np.ndarray, cfg: dict) -> tuple[np.ndarray, np.ndarray]:
+def rate_band(cfg: dict) -> tuple[float, float]:
+    """Band-pass edges at the working rate FS / downsample: the upper edge is lowered to the anti-alias cutoff
+    (antialias_ratio * new rate) when it lies above, e.g. 0.4 * 512 = 205 Hz instead of 450 Hz."""
+    lo, hi = cfg["band_hz"]
+    k = cfg.get("downsample", 1)
+    return (lo, min(hi, cfg["antialias_ratio"] * FS / k)) if k > 1 else (lo, hi)
+
+
+def rate_filters(cfg: dict) -> tuple[np.ndarray, np.ndarray | None]:
+    """Band-pass designed for the working rate FS / downsample and, when downsampling, the anti-alias low-pass
+    applied at FS before every k-th sample is kept (None otherwise)."""
+    k = cfg.get("downsample", 1)
+    band = rate_band(cfg)
+    sos = design_filter(fs=FS / k, band_hz=band, order=cfg["order"], notch_hz=tuple(cfg["notch_hz"]))
+    return sos, (design_antialias(band[1], cfg["antialias_order"]) if k > 1 else None)
+
+
+def trial_features(x: np.ndarray, sos: np.ndarray, cfg: dict,
+                   aa_sos: np.ndarray | None = None) -> tuple[np.ndarray, np.ndarray]:
     """Filter one trial, drop the filter start-up, cut windows and compute features.
 
     Args:
-        x: raw trial [T, C], mV.
-        sos: filter from `design_filter`.
-        cfg: dict with window_ms, step_ms, warmup_ms, zc_thr_mv, ssc_thr_mv.
+        x: raw trial [T, C], mV, at FS.
+        sos: band-pass from `design_filter` for the working rate FS / downsample.
+        cfg: dict with window_ms, step_ms, warmup_ms, zc_thr_mv, ssc_thr_mv and optional downsample (k).
+        aa_sos: anti-alias low-pass at FS, needed when downsample > 1.
 
     Returns:
         Features [N, 5 * C] and the end time of each window in seconds from the trial start.
     """
+    k = cfg.get("downsample", 1)
+    if k > 1:
+        x = filter_causal(x, aa_sos)[0][::k]
+    fs = FS / k
     y, _ = filter_causal(x, sos)
-    warm = ms_to_samples(cfg["warmup_ms"])
-    win, step = ms_to_samples(cfg["window_ms"]), ms_to_samples(cfg["step_ms"])
+    warm = ms_to_samples(cfg["warmup_ms"], fs)
+    win, step = ms_to_samples(cfg["window_ms"], fs), ms_to_samples(cfg["step_ms"], fs)
     w = sliding_windows(y[warm:], win, step)
-    t_end = (warm + np.arange(len(w)) * step + win) / FS
+    t_end = (warm + np.arange(len(w)) * step + win) / fs
     return hudgins(w, cfg["zc_thr_mv"], cfg["ssc_thr_mv"]), t_end
 
 
@@ -70,13 +93,14 @@ def feature_table(index: pd.DataFrame, cfg: dict, channels: list[str]) -> pd.Dat
     Args:
         index: rows of `data.build_index()`.
         cfg: preprocessing + feature settings (band_hz, order, notch_hz, window_ms, step_ms, warmup_ms,
-            zc_thr_mv, ssc_thr_mv); the cache key is derived from it.
+            zc_thr_mv, ssc_thr_mv); optional record_channels (record columns, default the 12 wrist channels) and
+            downsample with antialias_ratio, antialias_order (see `rate_filters`). The cache key is derived from it.
         channels: channel names for the feature columns.
 
     Returns:
         One row per window: participant, session, gesture, trial, t_end, then the feature columns.
     """
-    sos = design_filter(band_hz=tuple(cfg["band_hz"]), order=cfg["order"], notch_hz=tuple(cfg["notch_hz"]))
+    sos, aa_sos = rate_filters(cfg)
     cache = CACHE_DIR / f"features_{_cfg_key(cfg)}"
     cache.mkdir(parents=True, exist_ok=True)
     names = feature_names(channels)
@@ -88,7 +112,8 @@ def feature_table(index: pd.DataFrame, cfg: dict, channels: list[str]) -> pd.Dat
             continue
         rows = []
         for r in sub.itertuples():
-            f, t = trial_features(load_trial(r.session, r.participant, r.gesture, r.trial), sos, cfg)
+            x = load_trial(r.session, r.participant, r.gesture, r.trial, cfg.get("record_channels"))
+            f, t = trial_features(x, sos, cfg, aa_sos)
             meta = pd.DataFrame({"participant": r.participant, "session": r.session, "gesture": r.gesture,
                                  "trial": r.trial, "t_end": t})
             rows.append(pd.concat([meta, pd.DataFrame(f, columns=names)], axis=1))
